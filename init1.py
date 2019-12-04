@@ -14,6 +14,8 @@ conn = pymysql.connect(host='192.168.64.2',
                        password='admin',
                        database='blog')
 
+asdf
+
 #Define a route to hello function
 @app.route('/')
 def hello():
