@@ -14,17 +14,24 @@ conn = pymysql.connect(host='192.168.64.2',
                        password='admin',
                        database='blog')
 
-asdf
+
 
 #Define a route to hello function
 @app.route('/')
-def hello():
-	return render_template('index.html')
+def home():
+
+    cursor = conn.cursor()
+    query = "SELECT airline_name FROM airline"
+    cursor.execute(query)
+    data = cursor.fetchone()
+    cursor.close()
+    return render_template('index.html', )
 
 #Define route for login
 @app.route('/login')
 def login():
 	return render_template('login.html')
+
 
 #Define route for register
 @app.route('/register')
