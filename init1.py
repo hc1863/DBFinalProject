@@ -4,10 +4,10 @@
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 import pymysql.cursors
 
+
 #Initialize the app from Flask
 app = Flask(__name__)
 #testchange 1
-
 #Configure MySQL
 conn = pymysql.connect(host='192.168.64.2',
                        user='root',
