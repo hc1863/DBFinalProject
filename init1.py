@@ -48,17 +48,31 @@ def test():
     data = cursor.fetchall()
     cursor.close()
     arrival_airportdata = list(data)
-    
+
     cursor = conn.cursor()
     query = "SELECT departure_airport FROM flight"
     cursor.execute(query)
     data = cursor.fetchall()
     cursor.close()
     departure_airportdata = list(data)
-
     
-
     return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
+
+
+
+@app.route('/submitdropdown', methods=['GET', 'POST'])
+def test1():
+
+    if request.method == "POST":
+        arrairport = request.form.get("arrairport", None)
+        return render_template('login.html')
+        if arrairport != None:
+            return render_template('testpage1.html', arrairport = arrairport)
+        return render_template('testpage1.html')
+
+
+
+    # return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
 #Authenticates the login
 @app.route('/loginAuth', methods=['GET', 'POST'])

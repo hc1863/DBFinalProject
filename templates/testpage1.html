@@ -7,6 +7,7 @@
 </head>
 <body>
 
+
 <div class="container">
   <h2>Dropdowns</h2>
   <p>The .dropdown class is used to indicate a dropdown menu.</p>
@@ -15,18 +16,26 @@
   <div class="dropdown">
     <html>
       <body>
-        <select>
-          {% for arrival_airport in arrival_airport %}
-          <option value="{{arrival_airport}}" SELECTED>{{arrival_airport}}</option>"
-          {% endfor %}
-        </select>
-        <select>
-          {% for departure_airport in departure_airport %}
-          <option value="{{departure_airport}}" SELECTED>{{departure_airport}}</option>"
-          {% endfor %}
-        </select>
+        <form action="/submitdropdown" method="POST" enctype="multipart/form-data">
+          <select name = "arrairport">
+            {% for arrival_airport in arrival_airport %}
+            <option value="{{arrival_airport}}" SELECTED>{{arrival_airport}}</option>"
+            {% endfor %}
+          </select>
+          <select>
+            {% for departure_airport in departure_airport %}
+            <option value="{{departure_airport}}" SELECTED>{{departure_airport}}</option>"
+            {% endfor %}
+          </select>
+        </form>
+        <input type="submit" name="submit_button" value="Submit">
       </body>
     </html>
+  </div>
+  <div id="result">
+    {% if arrairport is defined %}
+        You have selected: {{ arrairport }}
+    {% endif %}
   </div>
 </div>
 
