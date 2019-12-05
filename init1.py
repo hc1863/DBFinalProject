@@ -65,13 +65,9 @@ def test():
     data = cursor.fetchall()
     cursor.close()
     departure_airportdata = list(data)
-<<<<<<< HEAD
-    
-=======
 
 
 
->>>>>>> cab1d1a951a4b63587c80e26a0127e8774150b22
     return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
 
