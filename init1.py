@@ -77,7 +77,6 @@ def test1():
 
     if request.method == "POST":
         arrairport = request.form.get("arrairport", None)
-        return render_template('login.html')
         if arrairport != None:
             return render_template('testpage1.html', arrairport = arrairport)
         return render_template('testpage1.html')
