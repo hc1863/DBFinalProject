@@ -30,6 +30,16 @@ def getarrivalairport():
 
     return render_template('testpage1.html', test1=data[0])
 
+@app.route('/testpage3.html')
+def dropdowntest():
+    cursor = conn.cursor()
+    query = "SELECT arrival_airport FROM flight"
+    cursor.execute(query)
+    data = cursor.fetchone()
+    cursor.close()
+
+    return render_template('testpage3.html')
+
 #Define route for login
 @app.route('/login')
 def login():
@@ -48,7 +58,7 @@ def test():
     data = cursor.fetchall()
     cursor.close()
     arrival_airportdata = list(data)
-    
+
     cursor = conn.cursor()
     query = "SELECT departure_airport FROM flight"
     cursor.execute(query)
@@ -56,7 +66,7 @@ def test():
     cursor.close()
     departure_airportdata = list(data)
 
-    
+
 
     return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
