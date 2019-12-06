@@ -4,7 +4,6 @@
 <body>
 <form action="/post" method="POST">
 	<h1>Welcome {{username}}</h1>
-	<input type="text" name = "blog" placeholder="your post" required/> </br>
 	<input type="submit" value = Post />
 </form>
 
@@ -22,7 +21,7 @@
 	<tr>
 		<td>{{line[0]}}</td>
 		<td>{{line[1]}}</td>
-		
+
 	</tr>
 {% endfor %}
 </table>

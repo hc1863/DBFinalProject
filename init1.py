@@ -8,6 +8,7 @@ import pymysql.cursors
 #Initialize the app from Flask
 app = Flask(__name__)
 #testchange 1
+
 #Configure MySQL
 conn = pymysql.connect(host='192.168.64.3',
                        user='root',
@@ -30,7 +31,7 @@ def getarrivalairport():
 
     return render_template('testpage1.html', test1=data[0])
 
-@app.route('/testpage3.html')
+@app.route('/bootstrap/testpage3.html')
 def dropdowntest():
     cursor = conn.cursor()
     query = "SELECT DISTINCT arrival_airport FROM flight"
@@ -38,19 +39,42 @@ def dropdowntest():
     data = cursor.fetchone()
     cursor.close()
 
-    return render_template('testpage3.html')
+    return render_template('bootstrap/testpage3.html')
 
 #Define route for login
 @app.route('/login')
 def login():
 	return render_template('login.html')
 
+@app.route('/aslogin')
+def aslogin():
+	return render_template('aslogin.html')
+
 #Define route for register
 @app.route('/register')
 def register():
 	return render_template('register.html')
 
+<<<<<<< HEAD
 @app.route('/testpage1', methods=['GET', 'POST'])
+=======
+@app.route('/asregister')
+def asregister():
+    cursor = conn.cursor()
+    query = "SELECT airline_name FROM airline"
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    airlinenames = list(data)
+
+    return render_template('asregister.html', airlinenames = airlinenames)
+
+@app.route('/baregister')
+def baregister():
+	return render_template('baregister.html')
+
+@app.route('/testpage1')
+>>>>>>> 25b267ee84e065c9b12b6a6901c63a5410d68380
 def test():
     cursor = conn.cursor()
     query = "SELECT DISTINCT arrival_airport FROM flight"
@@ -66,6 +90,7 @@ def test():
     cursor.close()
     departure_airportdata = list(data)
 
+<<<<<<< HEAD
     if request.method == "POST":
         arrairport = request.form.get("arrairport", None)
         depairport = request.form.get("depairport", None)
@@ -86,6 +111,8 @@ def test():
             return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate, finalflightdata = finalflightdata)
         return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
+=======
+>>>>>>> 25b267ee84e065c9b12b6a6901c63a5410d68380
     return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
 
@@ -95,6 +122,7 @@ def test1():
 
     if request.method == "POST":
         arrairport = request.form.get("arrairport", None)
+        return render_template('login.html')
         if arrairport != None:
             return render_template('testpage1.html', arrairport = arrairport)
         return render_template('testpage1.html')
@@ -107,71 +135,179 @@ def test1():
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
 	#grabs information from the forms
-	username = request.form['username']
-	password = request.form['password']
-
-	#cursor used to send queries
-	cursor = conn.cursor()
+    email = request.form['email']
+    password = request.form['password']
+    typeof = request.form['typeof']
+    #cursor used to send queries
+    cursor = conn.cursor()
 	#executes query
-	query = "SELECT * FROM user WHERE username = \'{}\' and password = \'{}\'"
-	cursor.execute(query.format(username, password))
+    query = "SELECT * FROM {} WHERE email = \'{}\' and password = \'{}\'"
+    cursor.execute(query.format(typeof, email, password))
 	#stores the results in a variable
-	data = cursor.fetchone()
+    data = cursor.fetchone()
 	#use fetchall() if you are expecting more than 1 data row
-	cursor.close()
-	error = None
-	if(data):
+    cursor.close()
+    error = None
+    if(data):
 		#creates a session for the the user
 		#session is a built in
-		session['username'] = username
-		return redirect(url_for('home'))
-	else:
+        session['email'] = email
+        return redirect(url_for('home'))
+    else:
 		#returns an error message to the html page
-		error = 'Invalid login or username'
-		return render_template('login.html', error=error)
+        error = 'Invalid login or username'
+        return render_template('login.html', error=error)
+
+@app.route('/asloginAuth', methods=['GET', 'POST'])
+def asloginAuth():
+	#grabs information from the forms
+    username = request.form['username']
+    password = request.form['password']
+    #cursor used to send queries
+    cursor = conn.cursor()
+	#executes query
+    query = "SELECT * FROM airline_staff WHERE username = \'{}\' and password = \'{}\'"
+    cursor.execute(query.format(username, password))
+	#stores the results in a variable
+    data = cursor.fetchone()
+	#use fetchall() if you are expecting more than 1 data row
+    cursor.close()
+    error = None
+    if(data):
+		#creates a session for the the user
+		#session is a built in
+        session['username'] = username
+        return redirect(url_for('home'))
+    else:
+		#returns an error message to the html page
+        error = 'Invalid login or username'
+        return render_template('aslogin.html', error=error)
 
 #Authenticates the register
 @app.route('/registerAuth', methods=['GET', 'POST'])
 def registerAuth():
 	#grabs information from the forms
-	username = request.form['username']
-	password = request.form['password']
+    email = request.form['email']
+    password = request.form['password']
+    name = request.form['name']
+    pnum = request.form['phone_number']
+    ppnum = request.form['passport_number']
+    ppcountry = request.form['passport_country']
+    ppexp = request.form['passport_expiration']
+    dob = request.form['date_of_birth']
+    street = request.form['street']
+    city = request.form['city']
+    state = request.form['state']
+    anum = request.form['building_number']
+
+
 
 #	if not len(password) >= 4:
 #                flash("Password length must be at least 4 characters")
  #               return redirect(request.url)
 
 	#cursor used to send queries
-	cursor = conn.cursor()
+    cursor = conn.cursor()
 	#executes query
-	query = "SELECT * FROM user WHERE username = \'{}\'"
-	cursor.execute(query.format(username))
+    query = "SELECT * FROM customer WHERE email = \'{}\'"
+    cursor.execute(query.format(email))
 	#stores the results in a variable
-	data = cursor.fetchone()
-	#use fetchall() if you are expecting more than 1 data row
-	error = None
-	if(data):
+
+    data = cursor.fetchone()
+    #use fetchall() if you are expecting more than 1 data row
+    error = None
+    if(data):
 		#If the previous query returns data, then user exists
-		error = "This user already exists"
-		return render_template('register.html', error = error)
-	else:
-		ins = "INSERT INTO user VALUES(\'{}\', \'{}\')"
-		cursor.execute(ins.format(username, password))
-		conn.commit()
-		cursor.close()
-		flash("You are logged in")
-		return render_template('index.html')
+        error = "This user already exists"
+        return render_template('register.html', error = error)
+    else:
+        ins = "INSERT INTO customer VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
+        cursor.execute(ins.format(email, name, password, anum, street, city, state, pnum, ppnum, ppexp, ppcountry, dob))
+        conn.commit()
+        cursor.close()
+        flash("You are logged in")
+        return render_template('index.html')
+
+
+@app.route('/baregisterAuth', methods=['GET', 'POST'])
+def baregisterAuth():
+	#grabs information from the forms
+    email = request.form['email']
+    password = request.form['password']
+    baid = request.form['booking_agent_id']
+
+#	if not len(password) >= 4:
+#                flash("Password length must be at least 4 characters")
+ #               return redirect(request.url)
+
+	#cursor used to send queries
+    cursor = conn.cursor()
+	#executes query
+    query = "SELECT * FROM booking_agent WHERE email = \'{}\'"
+    cursor.execute(query.format(email))
+	#stores the results in a variable
+
+    data = cursor.fetchone()
+    #use fetchall() if you are expecting more than 1 data row
+    error = None
+    if(data):
+		#If the previous query returns data, then user exists
+        error = "This user already exists"
+        return render_template('baregister.html', error = error)
+    else:
+        ins = "INSERT INTO booking_agent VALUES(\'{}\', \'{}\', \'{}\')"
+        cursor.execute(ins.format(email, name, baid))
+        conn.commit()
+        cursor.close()
+        flash("You are logged in")
+        return render_template('index.html')
+
+@app.route('/asregisterAuth', methods=['GET', 'POST'])
+def asregisterAuth():
+	#grabs information from the forms
+    username = request.form['username']
+    password = request.form['password']
+    fname = request.form['first_name']
+    lname = request.form['last_name']
+    dob = request.form['date_of_birth']
+    aname = request.form['airline_name']
+
+#	if not len(password) >= 4:
+#                flash("Password length must be at least 4 characters")
+ #               return redirect(request.url)
+
+	#cursor used to send queries
+    cursor = conn.cursor()
+	#executes query
+    query = "SELECT * FROM airline_staff WHERE username = \'{}\'"
+    cursor.execute(query.format(username))
+	#stores the results in a variable
+
+    data = cursor.fetchone()
+    #use fetchall() if you are expecting more than 1 data row
+    error = None
+    if(data):
+		#If the previous query returns data, then user exists
+        error = "This user already exists"
+        return render_template('asregister.html', error = error)
+    else:
+        ins = "INSERT INTO customer VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
+        cursor.execute(ins.format(username, password, fname, lname, dob, aname))
+        conn.commit()
+        cursor.close()
+        flash("You are logged in")
+        return render_template('index.html')
 
 @app.route('/home')
 def home():
 
-    username = session['username']
-    cursor = conn.cursor();
-    query = "SELECT ts, blog_post FROM blog WHERE username = \'{}\' ORDER BY ts DESC"
-    cursor.execute(query.format(username))
-    data1 = cursor.fetchall()
-    cursor.close()
-    return render_template('home.html', username=username, posts=data1)
+    username = session['email']
+    #cursor = conn.cursor();
+    #query = "SELECT ts, blog_post FROM blog WHERE username = \'{}\' ORDER BY ts DESC"
+    #cursor.execute(query.format(username))
+    #data1 = cursor.fetchall()
+    #cursor.close()
+    return render_template('home.html', username=username)
 
 
 @app.route('/post', methods=['GET', 'POST'])
@@ -187,7 +323,7 @@ def post():
 
 @app.route('/logout')
 def logout():
-	session.pop('username')
+	session.pop('email')
 	return redirect('/')
 
 app.secret_key = 'some key that you will never guess'

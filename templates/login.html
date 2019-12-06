@@ -3,8 +3,10 @@
 </head>
 <body>
 <form action="/loginAuth" method="POST">
-	<input type="text" name = "username" placeholder="username" required/> </br>
+	<input type="email" name = "email" placeholder="email" required/></br>
 	<input type="password" name = "password" placeholder="password" required/></br>
+	<input type="radio" name = "typeof" value = "customer" checked>Customer<br>
+	<input type="radio" name = "typeof" value = "booking_agent">Booking Agent<br>
 	<input type="submit" value = Login />
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>
@@ -12,6 +14,7 @@
 </form>
 
 <a href="/">Go back</a>
+<a href="/aslogin">Airline Staff Login</a>
 
 </body>
 
