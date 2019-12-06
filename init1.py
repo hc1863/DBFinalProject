@@ -3,7 +3,7 @@
 #Import Flask Library
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 import pymysql.cursors
-
+import datetime
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -72,6 +72,7 @@ def baregister():
 
 @app.route('/testpage1', methods=['GET', 'POST'])
 def test():
+    
     cursor = conn.cursor()
     query = "SELECT DISTINCT arrival_airport FROM flight"
     cursor.execute(query)
@@ -89,11 +90,14 @@ def test():
         arrairport = request.form.get("arrairport", None)
         depairport = request.form.get("depairport", None)
         depdate = request.form.get("depdate", None)
+        date_in = depdate # replace this string with whatever method or function collects your data
+        date_processing = date_in.replace('T', '-').replace(':', '-').split('-')
+        date_processing = [int(v) for v in date_processing]
+        depdate = datetime.datetime(*date_processing)
         cursor = conn.cursor()
-        flightinfoquery = ("SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status FROM flight WHERE arrival_airport = \"{}\" AND departure_airport = \"{}\"")
-                             # " AND departure_time = %s")
-        queryvariables = (arrairport, depairport)
-        cursor.execute(flightinfoquery.format(arrairport, depairport))
+        flightinfoquery = ("SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status FROM flight WHERE status = 'Upcoming' AND arrival_airport = \"{}\" AND departure_airport = \"{}\" AND departure_time = \"{}\"")
+        queryvariables = (arrairport, depairport, depdate)
+        cursor.execute(flightinfoquery.format(arrairport, depairport, depdate))
         flightdata = cursor.fetchmany()
         cursor.close()
         finalflightdata = flightdata
