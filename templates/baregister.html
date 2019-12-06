@@ -2,22 +2,10 @@
 <head>
 </head>
 <body>
-<form action="/registerAuth" method="POST">
-	<input type="text" name = "name" placeholder="name" required/> <br>
-	<input type="password" name = "password" placeholder="password" required/><br>
+<form action="/baregisterAuth" method="POST">
 	<input type="email" name = "email" placeholder="email" required/><br>
-	<input type="tel" name="phone_number" placeholder="phone" required/><br>
-
-	<input type="text" name="passport_number" placeholder="passport number" required/><br>
-	<input type="text" name="passport_country" placeholder="passport country" required/><br>
-	Passport Expiration: <input type="date" name="passport_expiration" placeholder="passport expiration" required/></br>
-
-	Date of Birth: <input type="date" name="date_of_birth" placeholder="DoB" required/><br>
-
-	<input type='text' name="street" placeholder="street" required/><br>
-	<input type="text" name="city" placeholder="city" required/> <br>>
-	<input type="text" name="state" placeholder="state" required/><br>
-	<input type="number" name="building_number" placeholder="Building Number" required/><br>
+	<input type="password" name = "password" placeholder="password" required/><br>
+	<input type="number" name="booking_agent_id" placeholder="Booking Agent ID" required/><br>
 
 
 	<input type="submit" value = Register />
@@ -27,7 +15,5 @@
 	{% endif %}
 </form>
 <a href="/">Go back</a>
-<a href="baregister.html">I am a Booking Agent</a>
-<a href="asregister.html">I am an Airline Staff member</a>
 </body>
 </html>

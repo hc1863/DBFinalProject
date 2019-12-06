@@ -53,7 +53,14 @@ def register():
 
 @app.route('/asregister')
 def asregister():
-	return render_template('asregister.html')
+    cursor = conn.cursor()
+    query = "SELECT airline_name FROM airline"
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    airlinenames = list(data)
+
+    return render_template('asregister.html', airlinenames = airlinenames)
 
 @app.route('/baregister')
 def baregister():
@@ -160,6 +167,76 @@ def registerAuth():
     else:
         ins = "INSERT INTO customer VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
         cursor.execute(ins.format(email, name, password, anum, street, city, state, pnum, ppnum, ppexp, ppcountry, dob))
+        conn.commit()
+        cursor.close()
+        flash("You are logged in")
+        return render_template('index.html')
+
+
+@app.route('/baregisterAuth', methods=['GET', 'POST'])
+def baregisterAuth():
+	#grabs information from the forms
+    email = request.form['email']
+    password = request.form['password']
+    baid = request.form['booking_agent_id']
+
+#	if not len(password) >= 4:
+#                flash("Password length must be at least 4 characters")
+ #               return redirect(request.url)
+
+	#cursor used to send queries
+    cursor = conn.cursor()
+	#executes query
+    query = "SELECT * FROM booking_agent WHERE email = \'{}\'"
+    cursor.execute(query.format(email))
+	#stores the results in a variable
+
+    data = cursor.fetchone()
+    #use fetchall() if you are expecting more than 1 data row
+    error = None
+    if(data):
+		#If the previous query returns data, then user exists
+        error = "This user already exists"
+        return render_template('baregister.html', error = error)
+    else:
+        ins = "INSERT INTO booking_agent VALUES(\'{}\', \'{}\', \'{}\')"
+        cursor.execute(ins.format(email, name, baid))
+        conn.commit()
+        cursor.close()
+        flash("You are logged in")
+        return render_template('index.html')
+
+@app.route('/asregisterAuth', methods=['GET', 'POST'])
+def asregisterAuth():
+	#grabs information from the forms
+    username = request.form['username']
+    password = request.form['password']
+    fname = request.form['first_name']
+    lname = request.form['last_name']
+    dob = request.form['date_of_birth']
+    aname = request.form['airline_name']
+
+#	if not len(password) >= 4:
+#                flash("Password length must be at least 4 characters")
+ #               return redirect(request.url)
+
+	#cursor used to send queries
+    cursor = conn.cursor()
+	#executes query
+    query = "SELECT * FROM airline_staff WHERE username = \'{}\'"
+    cursor.execute(query.format(username))
+	#stores the results in a variable
+
+    data = cursor.fetchone()
+    #use fetchall() if you are expecting more than 1 data row
+    error = None
+    if(data):
+		#If the previous query returns data, then user exists
+        error = "This user already exists"
+        return render_template('asregister.html', error = error)
+    else:
+        ins = "INSERT INTO customer VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
+        cursor.execute(ins.format(username, password, fname, lname, dob, aname))
         conn.commit()
         cursor.close()
         flash("You are logged in")
