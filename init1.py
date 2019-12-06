@@ -9,7 +9,7 @@ import pymysql.cursors
 app = Flask(__name__)
 #testchange 1
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -23,7 +23,7 @@ def hello():
 @app.route('/getarrivalairport')
 def getarrivalairport():
     cursor = conn.cursor()
-    query = "SELECT arrival_airport FROM flight"
+    query = "SELECT DISTINCT arrival_airport FROM flight"
     cursor.execute(query)
     data = cursor.fetchone()
     cursor.close()
@@ -33,7 +33,7 @@ def getarrivalairport():
 @app.route('/testpage3.html')
 def dropdowntest():
     cursor = conn.cursor()
-    query = "SELECT arrival_airport FROM flight"
+    query = "SELECT DISTINCT arrival_airport FROM flight"
     cursor.execute(query)
     data = cursor.fetchone()
     cursor.close()
@@ -50,23 +50,41 @@ def login():
 def register():
 	return render_template('register.html')
 
-@app.route('/testpage1')
+@app.route('/testpage1', methods=['GET', 'POST'])
 def test():
     cursor = conn.cursor()
-    query = "SELECT arrival_airport FROM flight"
+    query = "SELECT DISTINCT arrival_airport FROM flight"
     cursor.execute(query)
     data = cursor.fetchall()
     cursor.close()
     arrival_airportdata = list(data)
 
     cursor = conn.cursor()
-    query = "SELECT departure_airport FROM flight"
+    query = "SELECT DISTINCT departure_airport FROM flight"
     cursor.execute(query)
     data = cursor.fetchall()
     cursor.close()
     departure_airportdata = list(data)
 
-
+    if request.method == "POST":
+        arrairport = request.form.get("arrairport", None)
+        depairport = request.form.get("depairport", None)
+        depdate = request.form.get("depdate", None)
+        cursor = conn.cursor()
+        flightinfoquery = ("SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status "
+                            "FROM flight "
+                             "WHERE arrival_airport = \'{}\'"
+                             " AND departure_airport = \'{}\'")
+                             # " AND departure_time = %s")
+        queryvariables = (arrairport, depairport)
+        cursor.execute(flightinfoquery.format(arrairport[0], depairport[0]))
+        flightdata = cursor.fetchall()
+        cursor.close()
+        finalflightdata = flightdata
+        if arrairport != None:
+            # return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate)
+            return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate, finalflightdata = finalflightdata)
+        return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
     return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
