@@ -19,12 +19,12 @@
         <form action="/testpage1" method="POST">
           <select name = "arrairport">
             {% for arrival_airport in arrival_airport %}
-            <option value="{{arrival_airport}}" SELECTED>{{arrival_airport[0]}}</option>"
+            <option value="{{arrival_airport[0]}}" SELECTED>{{arrival_airport[0]}}</option>"
             {% endfor %}
           </select>
           <select name = "depairport">
             {% for departure_airport in departure_airport %}
-            <option value="{{departure_airport}}" SELECTED>{{departure_airport[0]}}</option>"
+            <option value="{{departure_airport[0]}}" SELECTED>{{departure_airport[0]}}</option>"
             {% endfor %}
           </select>
           Departure Date: <input type="datetime-local" name="depdate">
@@ -44,7 +44,7 @@
         You have selected: {{ depdate }}
     {% endif %}
     {% if finalflightdata is defined %}
-        You have selected: {{ finalflightdata[0] }}
+        You have selected: {{ finalflightdata }}
     {% endif %}
   </div>
 </div>
