@@ -10,7 +10,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.3',
+conn = pymysql.connect(host='192.168.64.2',
                        user='root',
                        password='admin',
                        database='blog')
@@ -141,6 +141,8 @@ def loginAuth():
 		#creates a session for the the user
 		#session is a built in
         session['email'] = email
+        session['typeof'] = typeof
+
         return redirect(url_for('home'))
     else:
 		#returns an error message to the html page
@@ -166,7 +168,7 @@ def asloginAuth():
 		#creates a session for the the user
 		#session is a built in
         session['username'] = username
-        return redirect(url_for('home'))
+        return redirect(url_for('ashome'))
     else:
 		#returns an error message to the html page
         error = 'Invalid login or username'
@@ -298,6 +300,11 @@ def home():
     #cursor.close()
     return render_template('home.html', username=username)
 
+@app.route('/ashome')
+def ashome():
+    username = session['username']
+    return render_template('ashome.html', username=username)
+
 
 @app.route('/post', methods=['GET', 'POST'])
 def post():
@@ -314,6 +321,36 @@ def post():
 def logout():
 	session.pop('email')
 	return redirect('/')
+
+@app.route('/viewflights')
+def viewflights():
+    cursor = conn.cursor()
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE customer_email = \"{}\""
+    cursor.execute(query.format(session['email']))
+    data = cursor.fetchall()
+    cursor.close()
+    flightnumlist = flatten(data)
+
+
+    templist = []
+    for i in flightnumlist:
+        cursor = conn.cursor()
+        query = "SELECT * FROM flight WHERE flight_num = \"{}\""
+        cursor.execute(query.format(i))
+        d = cursor.fetchall()
+        cursor.close()
+        for j in d:
+            templist.append(j)
+
+    return render_template('viewflights.html', flightlist=templist)
+
+def isTuple(x): return type(x) == tuple
+
+def flatten(T):
+    if not isTuple(T): return (T,)
+    elif len(T) == 0: return ()
+    else: return flatten(T[0]) + flatten(T[1:])
+
 
 app.secret_key = 'some key that you will never guess'
 #Run the app on localhost port 5000
