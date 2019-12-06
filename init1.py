@@ -4,10 +4,14 @@
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 import pymysql.cursors
 
+#from flask_bootstrap import Bootstrap
+
 
 #Initialize the app from Flask
 app = Flask(__name__)
 #testchange 1
+
+#bootstrap = Bootstrap(app)
 #Configure MySQL
 conn = pymysql.connect(host='192.168.64.2',
                        user='root',
@@ -30,7 +34,7 @@ def getarrivalairport():
 
     return render_template('testpage1.html', test1=data[0])
 
-@app.route('/testpage3.html')
+@app.route('/bootstrap/testpage3.html')
 def dropdowntest():
     cursor = conn.cursor()
     query = "SELECT arrival_airport FROM flight"
@@ -38,7 +42,7 @@ def dropdowntest():
     data = cursor.fetchone()
     cursor.close()
 
-    return render_template('testpage3.html')
+    return render_template('bootstrap/testpage3.html')
 
 #Define route for login
 @app.route('/login')
@@ -66,8 +70,6 @@ def test():
     cursor.close()
     departure_airportdata = list(data)
 
-
-
     return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
 
@@ -77,6 +79,7 @@ def test1():
 
     if request.method == "POST":
         arrairport = request.form.get("arrairport", None)
+        return render_template('login.html')
         if arrairport != None:
             return render_template('testpage1.html', arrairport = arrairport)
         return render_template('testpage1.html')
