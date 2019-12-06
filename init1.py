@@ -55,9 +55,6 @@ def aslogin():
 def register():
 	return render_template('register.html')
 
-<<<<<<< HEAD
-@app.route('/testpage1', methods=['GET', 'POST'])
-=======
 @app.route('/asregister')
 def asregister():
     cursor = conn.cursor()
@@ -73,8 +70,7 @@ def asregister():
 def baregister():
 	return render_template('baregister.html')
 
-@app.route('/testpage1')
->>>>>>> 25b267ee84e065c9b12b6a6901c63a5410d68380
+@app.route('/testpage1', methods=['GET', 'POST'])
 def test():
     cursor = conn.cursor()
     query = "SELECT DISTINCT arrival_airport FROM flight"
@@ -89,8 +85,6 @@ def test():
     data = cursor.fetchall()
     cursor.close()
     departure_airportdata = list(data)
-
-<<<<<<< HEAD
     if request.method == "POST":
         arrairport = request.form.get("arrairport", None)
         depairport = request.form.get("depairport", None)
@@ -111,8 +105,6 @@ def test():
             return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate, finalflightdata = finalflightdata)
         return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
-=======
->>>>>>> 25b267ee84e065c9b12b6a6901c63a5410d68380
     return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
 
