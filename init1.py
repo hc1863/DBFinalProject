@@ -46,6 +46,10 @@ def dropdowntest():
 def login():
 	return render_template('login.html')
 
+@app.route('/aslogin')
+def aslogin():
+	return render_template('aslogin.html')
+
 #Define route for register
 @app.route('/register')
 def register():
@@ -104,28 +108,53 @@ def test1():
 @app.route('/loginAuth', methods=['GET', 'POST'])
 def loginAuth():
 	#grabs information from the forms
-	username = request.form['username']
-	password = request.form['password']
-
-	#cursor used to send queries
-	cursor = conn.cursor()
+    email = request.form['email']
+    password = request.form['password']
+    typeof = request.form['typeof']
+    #cursor used to send queries
+    cursor = conn.cursor()
 	#executes query
-	query = "SELECT * FROM user WHERE username = \'{}\' and password = \'{}\'"
-	cursor.execute(query.format(username, password))
+    query = "SELECT * FROM {} WHERE email = \'{}\' and password = \'{}\'"
+    cursor.execute(query.format(typeof, email, password))
 	#stores the results in a variable
-	data = cursor.fetchone()
+    data = cursor.fetchone()
 	#use fetchall() if you are expecting more than 1 data row
-	cursor.close()
-	error = None
-	if(data):
+    cursor.close()
+    error = None
+    if(data):
 		#creates a session for the the user
 		#session is a built in
-		session['username'] = username
-		return redirect(url_for('home'))
-	else:
+        session['email'] = email
+        return redirect(url_for('home'))
+    else:
 		#returns an error message to the html page
-		error = 'Invalid login or username'
-		return render_template('login.html', error=error)
+        error = 'Invalid login or username'
+        return render_template('login.html', error=error)
+
+@app.route('/asloginAuth', methods=['GET', 'POST'])
+def asloginAuth():
+	#grabs information from the forms
+    username = request.form['username']
+    password = request.form['password']
+    #cursor used to send queries
+    cursor = conn.cursor()
+	#executes query
+    query = "SELECT * FROM airline_staff WHERE username = \'{}\' and password = \'{}\'"
+    cursor.execute(query.format(username, password))
+	#stores the results in a variable
+    data = cursor.fetchone()
+	#use fetchall() if you are expecting more than 1 data row
+    cursor.close()
+    error = None
+    if(data):
+		#creates a session for the the user
+		#session is a built in
+        session['username'] = username
+        return redirect(url_for('home'))
+    else:
+		#returns an error message to the html page
+        error = 'Invalid login or username'
+        return render_template('aslogin.html', error=error)
 
 #Authenticates the register
 @app.route('/registerAuth', methods=['GET', 'POST'])
@@ -245,13 +274,13 @@ def asregisterAuth():
 @app.route('/home')
 def home():
 
-    username = session['username']
-    cursor = conn.cursor();
-    query = "SELECT ts, blog_post FROM blog WHERE username = \'{}\' ORDER BY ts DESC"
-    cursor.execute(query.format(username))
-    data1 = cursor.fetchall()
-    cursor.close()
-    return render_template('home.html', username=username, posts=data1)
+    username = session['email']
+    #cursor = conn.cursor();
+    #query = "SELECT ts, blog_post FROM blog WHERE username = \'{}\' ORDER BY ts DESC"
+    #cursor.execute(query.format(username))
+    #data1 = cursor.fetchall()
+    #cursor.close()
+    return render_template('home.html', username=username)
 
 
 @app.route('/post', methods=['GET', 'POST'])
@@ -267,7 +296,7 @@ def post():
 
 @app.route('/logout')
 def logout():
-	session.pop('username')
+	session.pop('email')
 	return redirect('/')
 
 app.secret_key = 'some key that you will never guess'
