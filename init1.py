@@ -10,7 +10,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -90,7 +90,7 @@ def test():
         depairport = request.form.get("depairport", None)
         depdate = request.form.get("depdate", None)
         cursor = conn.cursor()
-        flightinfoquery = ("SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status FROM flight WHERE arrival_airport = \'{}\' AND departure_airport = \'{}\'")
+        flightinfoquery = ("SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status FROM flight WHERE arrival_airport = \"{}\" AND departure_airport = \"{}\"")
                              # " AND departure_time = %s")
         queryvariables = (arrairport, depairport)
         cursor.execute(flightinfoquery.format(arrairport, depairport))
