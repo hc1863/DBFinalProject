@@ -4,14 +4,11 @@
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 import pymysql.cursors
 
-#from flask_bootstrap import Bootstrap
-
 
 #Initialize the app from Flask
 app = Flask(__name__)
 #testchange 1
 
-#bootstrap = Bootstrap(app)
 #Configure MySQL
 conn = pymysql.connect(host='192.168.64.2',
                        user='root',
@@ -53,6 +50,14 @@ def login():
 @app.route('/register')
 def register():
 	return render_template('register.html')
+
+@app.route('/asregister')
+def asregister():
+	return render_template('asregister.html')
+
+@app.route('/baregister')
+def baregister():
+	return render_template('baregister.html')
 
 @app.route('/testpage1')
 def test():
@@ -119,33 +124,46 @@ def loginAuth():
 @app.route('/registerAuth', methods=['GET', 'POST'])
 def registerAuth():
 	#grabs information from the forms
-	username = request.form['username']
-	password = request.form['password']
+    email = request.form['email']
+    password = request.form['password']
+    name = request.form['name']
+    pnum = request.form['phone_number']
+    ppnum = request.form['passport_number']
+    ppcountry = request.form['passport_country']
+    ppexp = request.form['passport_expiration']
+    dob = request.form['date_of_birth']
+    street = request.form['street']
+    city = request.form['city']
+    state = request.form['state']
+    anum = request.form['building_number']
+
+
 
 #	if not len(password) >= 4:
 #                flash("Password length must be at least 4 characters")
  #               return redirect(request.url)
 
 	#cursor used to send queries
-	cursor = conn.cursor()
+    cursor = conn.cursor()
 	#executes query
-	query = "SELECT * FROM user WHERE username = \'{}\'"
-	cursor.execute(query.format(username))
+    query = "SELECT * FROM customer WHERE email = \'{}\'"
+    cursor.execute(query.format(email))
 	#stores the results in a variable
-	data = cursor.fetchone()
-	#use fetchall() if you are expecting more than 1 data row
-	error = None
-	if(data):
+
+    data = cursor.fetchone()
+    #use fetchall() if you are expecting more than 1 data row
+    error = None
+    if(data):
 		#If the previous query returns data, then user exists
-		error = "This user already exists"
-		return render_template('register.html', error = error)
-	else:
-		ins = "INSERT INTO user VALUES(\'{}\', \'{}\')"
-		cursor.execute(ins.format(username, password))
-		conn.commit()
-		cursor.close()
-		flash("You are logged in")
-		return render_template('index.html')
+        error = "This user already exists"
+        return render_template('register.html', error = error)
+    else:
+        ins = "INSERT INTO customer VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
+        cursor.execute(ins.format(email, name, password, anum, street, city, state, pnum, ppnum, ppexp, ppcountry, dob))
+        conn.commit()
+        cursor.close()
+        flash("You are logged in")
+        return render_template('index.html')
 
 @app.route('/home')
 def home():
