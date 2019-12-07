@@ -13,29 +13,35 @@
   <p>The .dropdown class is used to indicate a dropdown menu.</p>
   <p>Use the .dropdown-menu class to actually build the dropdown menu.</p>
   <p>To open the dropdown menu, use a button or a link with a class of .dropdown-toggle and data-toggle="dropdown".</p>
-  <button onclick="/login">Search Upcoming Flights by Flight Number</button>
   <div class="dropdown">
     <html>
       <body>
         <form action="/testpage1" method="POST">
-          <label> Arrival Airport:
-          <select name = "arrairport">
-
-            {% for arrival_airport in arrival_airport %}
-            <option value="{{arrival_airport[0]}}" SELECTED>{{arrival_airport[0]}}</option>"
-            {% endfor %}
-          </select>
-          </label>
-          <label> Departure Airport:
-          <select name = "depairport">
-            {% for departure_airport in departure_airport %}
-            <option value="{{departure_airport[0]}}" SELECTED>{{departure_airport[0]}}</option>"
-            {% endfor %}
-          </select>
-          </label>
-          {% if flight_num_search == True %}
+          {% if error %}
+            <p class="error"><strong>Error:</strong> {{error}}</p>
+          {% endif %}
+          <div>
+            <input type="radio" name = "searchtype" value = "Airport_search" >Search Upcoming Flights by Arrival/Departure Airport <br>
+            <input type="radio" name = "searchtype" value = "flight_num_search">Search Upcoming Flights by Flight Number<br>
+          </div>
+          {% if searchtype == 'Airport_search' %}
+            <label> Arrival Airport:
+            <select name = "arrairport">
+              {% for arrival_airport in arrival_airport %}
+              <option value="{{arrival_airport[0]}}" SELECTED>{{arrival_airport[0]}}</option>"
+              {% endfor %}
+            </select>
+            </label>
+            <label> Departure Airport:
+            <select name = "depairport">
+              {% for departure_airport in departure_airport %}
+              <option value="{{departure_airport[0]}}" SELECTED>{{departure_airport[0]}}</option>"
+              {% endfor %}
+            </select>
+            </label>
+          {% endif %}
+          {% if searchtype == 'flight_num_search' %}
             <div>
-              <p> OR </p>
               <label>Flight Number:
                 <input type="text" name="flight_num">
               </label>
@@ -48,6 +54,9 @@
     </html>
   </div>
   <div id="result">
+    {% if searchtype is defined %}
+        You have selected this searchtype: {{ searchtype }}
+    {% endif %}
     {% if arrairport is defined %}
         You have selected: {{ arrairport }}
     {% endif %}
@@ -60,6 +69,7 @@
     {% if finalflightdata is defined %}
         You have selected: {{ finalflightdata }}
     {% endif %}
+
   </div>
 </div>
 
