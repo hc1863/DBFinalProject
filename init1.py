@@ -15,6 +15,9 @@ conn = pymysql.connect(host='192.168.64.3',
                        password='admin',
                        database='blog')
 
+#Variables
+searchtype = 'Airport_search'
+
 #Define a route to hello function
 @app.route('/')
 def hello():
@@ -72,8 +75,6 @@ def baregister():
 
 @app.route('/testpage1', methods=['GET', 'POST'])
 def test():
-    searchtype = request.form.get('searchtype', None)
-    # searchtype = 'flight_num_search'
     if searchtype == 'Airport_search':
         cursor = conn.cursor()
         query = "SELECT DISTINCT arrival_airport FROM flight"
@@ -105,12 +106,11 @@ def test():
             finalflightdata = flightdata
             error = None
             if arrairport != None and depairport!= None and depdate != None:
-                # return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate)
                 return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate, finalflightdata = finalflightdata, searchtype=searchtype)
             else:
                 error = 'One or more fields have not been filled in!'
                 return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, error=error, searchtype = searchtype)
-            return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, searchtype=searchtype)
+        return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, searchtype=searchtype)
     elif searchtype == 'flight_num_search':
         if request.method == "POST":
             flight_num = request.form.get("flight_num", None)
@@ -128,34 +128,39 @@ def test():
             finalflightdata = flightdata
             error = None
             if flight_num != None and depdate != None:
-                # return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate)
                 return render_template('testpage1.html', flight_num=flight_num, depdate = depdate, finalflightdata = finalflightdata, searchtype=searchtype)
             else:
                 error = 'One or more fields have not been filled in!'
                 return render_template('testpage1.html', searchtype=searchtype, error=error)
-
+        return render_template('testpage1.html', searchtype=searchtype)
     if searchtype == 'Airport_search':
         return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, searchtype=searchtype)
     else:
         return render_template('testpage1.html', searchtype=searchtype)
 
-@app.route('/toggle', methods=['GET', 'POST'])
-def toggle(myboolean):
-    myboolean = not myboolean
+@app.route('/changesearch', methods=['GET', 'POST'])
+def toggle():
+    global searchtype
+    if searchtype == "flight_num_search":
+        cursor = conn.cursor()
+        query = "SELECT DISTINCT arrival_airport FROM flight"
+        cursor.execute(query)
+        data = cursor.fetchall()
+        cursor.close()
+        arrival_airportdata = list(data)
+        cursor = conn.cursor()
+        query = "SELECT DISTINCT departure_airport FROM flight"
+        cursor.execute(query)
+        data = cursor.fetchall()
+        cursor.close()
+        departure_airportdata = list(data)
+        searchtype = "Airport_search"
+        return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, searchtype=searchtype)
+        return render_template('testpage1.html', searchtype=searchtype)
+    elif searchtype == "Airport_search":
+        searchtype = "flight_num_search"
+        return render_template('testpage1.html', searchtype=searchtype)
 
-@app.route('/submitdropdown', methods=['GET', 'POST'])
-def test1():
-
-    if request.method == "POST":
-        arrairport = request.form.get("arrairport", None)
-        return render_template('login.html')
-        if arrairport != None:
-            return render_template('testpage1.html', arrairport = arrairport)
-        return render_template('testpage1.html')
-
-
-
-    # return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
 
 #Authenticates the login
 @app.route('/loginAuth', methods=['GET', 'POST'])
