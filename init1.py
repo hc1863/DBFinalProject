@@ -156,7 +156,6 @@ def toggle():
         departure_airportdata = list(data)
         searchtype = "Airport_search"
         return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, searchtype=searchtype)
-        return render_template('testpage1.html', searchtype=searchtype)
     elif searchtype == "Airport_search":
         searchtype = "flight_num_search"
         return render_template('testpage1.html', searchtype=searchtype)
