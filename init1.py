@@ -10,7 +10,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -72,43 +72,76 @@ def baregister():
 
 @app.route('/testpage1', methods=['GET', 'POST'])
 def test():
-
-    cursor = conn.cursor()
-    query = "SELECT DISTINCT arrival_airport FROM flight"
-    cursor.execute(query)
-    data = cursor.fetchall()
-    cursor.close()
-    arrival_airportdata = list(data)
-
-    cursor = conn.cursor()
-    query = "SELECT DISTINCT departure_airport FROM flight"
-    cursor.execute(query)
-    data = cursor.fetchall()
-    cursor.close()
-    departure_airportdata = list(data)
-    if request.method == "POST":
-        arrairport = request.form.get("arrairport", None)
-        depairport = request.form.get("depairport", None)
-        depdate = request.form.get("depdate", None)
-        date_in = depdate # replace this string with whatever method or function collects your data
-        date_processing = date_in.replace('T', '-').replace(':', '-').split('-')
-        date_processing = [int(v) for v in date_processing]
-        depdate = datetime.datetime(*date_processing)
+    searchtype = request.form.get('searchtype', None)
+    # searchtype = 'flight_num_search'
+    if searchtype == 'Airport_search':
         cursor = conn.cursor()
-        flightinfoquery = ("SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status FROM flight WHERE status = 'Upcoming' AND arrival_airport = \"{}\" AND departure_airport = \"{}\" AND departure_time = \"{}\"")
-        queryvariables = (arrairport, depairport, depdate)
-        cursor.execute(flightinfoquery.format(arrairport, depairport, depdate))
-        flightdata = cursor.fetchmany()
+        query = "SELECT DISTINCT arrival_airport FROM flight"
+        cursor.execute(query)
+        data = cursor.fetchall()
         cursor.close()
-        finalflightdata = flightdata
-        if arrairport != None:
-            # return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate)
-            return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate, finalflightdata = finalflightdata)
-        return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
+        arrival_airportdata = list(data)
+        cursor = conn.cursor()
+        query = "SELECT DISTINCT departure_airport FROM flight"
+        cursor.execute(query)
+        data = cursor.fetchall()
+        cursor.close()
+        departure_airportdata = list(data)
+        if request.method == "POST":
+            arrairport = request.form.get("arrairport", None)
+            depairport = request.form.get("depairport", None)
+            depdate = request.form.get("depdate", None)
+            if depdate:
+                date_in = depdate # replace this string with whatever method or function collects your data
+                date_processing = date_in.replace('T', '-').replace(':', '-').split('-')
+                date_processing = [int(v) for v in date_processing]
+                depdate = datetime.datetime(*date_processing)
+            cursor = conn.cursor()
+            flightinfoquery = ("SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status FROM flight WHERE status = 'Upcoming' AND arrival_airport = \"{}\" AND departure_airport = \"{}\" AND departure_time = \"{}\"")
+            queryvariables = (arrairport, depairport, depdate)
+            cursor.execute(flightinfoquery.format(arrairport, depairport, depdate))
+            flightdata = cursor.fetchmany()
+            cursor.close()
+            finalflightdata = flightdata
+            error = None
+            if arrairport != None and depairport!= None and depdate != None:
+                # return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate)
+                return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate, finalflightdata = finalflightdata, searchtype=searchtype)
+            else:
+                error = 'One or more fields have not been filled in!'
+                return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, error=error, searchtype = searchtype)
+            return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, searchtype=searchtype)
+    elif searchtype == 'flight_num_search':
+        if request.method == "POST":
+            flight_num = request.form.get("flight_num", None)
+            depdate = request.form.get("depdate", None)
+            if depdate:
+                date_in = depdate # replace this string with whatever method or function collects your data
+                date_processing = date_in.replace('T', '-').replace(':', '-').split('-')
+                date_processing = [int(v) for v in date_processing]
+                depdate = datetime.datetime(*date_processing)
+            cursor = conn.cursor()
+            flightinfoquery = ("SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status FROM flight WHERE status = 'Upcoming' AND flight_num = \"{}\" AND departure_time = \"{}\"")
+            cursor.execute(flightinfoquery.format(flight_num, depdate))
+            flightdata = cursor.fetchmany()
+            cursor.close()
+            finalflightdata = flightdata
+            error = None
+            if flight_num != None and depdate != None:
+                # return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, arrairport = arrairport, depairport = depairport, depdate = depdate)
+                return render_template('testpage1.html', flight_num=flight_num, depdate = depdate, finalflightdata = finalflightdata, searchtype=searchtype)
+            else:
+                error = 'One or more fields have not been filled in!'
+                return render_template('testpage1.html', searchtype=searchtype, error=error)
 
-    return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata)
+    if searchtype == 'Airport_search':
+        return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, searchtype=searchtype)
+    else:
+        return render_template('testpage1.html', searchtype=searchtype)
 
-
+@app.route('/toggle', methods=['GET', 'POST'])
+def toggle(myboolean):
+    myboolean = not myboolean
 
 @app.route('/submitdropdown', methods=['GET', 'POST'])
 def test1():
