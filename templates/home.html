@@ -6,7 +6,17 @@
 
 <h1>Welcome {{username}}</h1>
 
+<% if typeof == 'customer': %>
+
 <a href='/viewflights'>View Flights</a>
+<a href='/trackmyspending'>Track My Spending</a>
+<a href='/purchaseticket'>Purchase Ticket</a>
+<a href='/searchforflight'>Search for Flights</a>
+
+
+<% else: %>
+
+<a href='/baviewflights'>View Flights</a>
 
 <a href="/logout">Logout</a>
 

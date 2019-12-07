@@ -72,7 +72,7 @@ def baregister():
 
 @app.route('/testpage1', methods=['GET', 'POST'])
 def test():
-    
+
     cursor = conn.cursor()
     query = "SELECT DISTINCT arrival_airport FROM flight"
     cursor.execute(query)
@@ -297,12 +297,13 @@ def asregisterAuth():
 def home():
 
     username = session['email']
+    typeof = session['typeof']
     #cursor = conn.cursor();
     #query = "SELECT ts, blog_post FROM blog WHERE username = \'{}\' ORDER BY ts DESC"
     #cursor.execute(query.format(username))
     #data1 = cursor.fetchall()
     #cursor.close()
-    return render_template('home.html', username=username)
+    return render_template('home.html', username=username, typeof=typeof)
 
 @app.route('/ashome')
 def ashome():
@@ -347,6 +348,49 @@ def viewflights():
             templist.append(j)
 
     return render_template('viewflights.html', flightlist=templist)
+
+@app.route('/baviewflights')
+def baviewflights():
+
+    cursor = conn.cursor()
+    query = "SELECT booking_agent_id from booking_agent WHERE email = \"{}\""
+    cursor.execute(query.format(session['email']))
+    data = cursor.fetchall()
+    cursor.close()
+    baid = data[0][0]
+
+    cursor = conn.cursor()
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id = \"{}\""
+    cursor.execute(query.format(baid))
+    data = cursor.fetchall()
+    cursor.close()
+    flightnumlist = flatten(data)
+
+    templist = []
+    for i in flightnumlist:
+        cursor = conn.cursor()
+        query = "SELECT * FROM flight WHERE flight_num = \"{}\""
+        cursor.execute(query.format(i))
+        d = cursor.fetchall()
+        cursor.close()
+        for j in d:
+            templist.append(j)
+
+
+    return render_template('baviewflights.html', flightlist = templist)
+
+@app.route('/purchaseticket')
+def purchaseticket():
+
+    return render_template('purchaseticket.html')
+
+@app.route('/searchforflight')
+def searchforflight():
+
+    return render_template('searchforflight.html')
+
+
+
 
 def isTuple(x): return type(x) == tuple
 
