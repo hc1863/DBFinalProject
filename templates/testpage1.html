@@ -114,11 +114,14 @@
         {% endfor %}
         {% if session['logged_in'] == True %}
         <td>
-          <a href="/purchaseticket" id = {{testcounter}}>
+            <form action="/purchaseticket" method="POST">
+            <button type="/submit" name = "ticketpurchase" value = {{row}}>{{row}}Purchase a Ticket for this flight</button>
+          </form>
+          <!-- <a href="/purchaseticket" id = {{testcounter}}>
             <div style="height:100%;width:100%; display:block">
                Purchase a Ticket for this flight
              </div>
-          </a>
+          </a> -->
           {% endif %}
         </td>
       </tr>
