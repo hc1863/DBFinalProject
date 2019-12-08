@@ -2,6 +2,7 @@
 
 #Import Flask Library
 from flask import Flask, render_template, request, session, url_for, redirect, flash
+from ast import literal_eval
 import pymysql.cursors
 import datetime
 
@@ -10,7 +11,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -428,7 +429,31 @@ def baviewflights():
 @app.route('/purchaseticket', methods=['GET', 'POST'])
 def purchaseticket():
     ticket_info = request.form.get("ticketpurchase", None)
-    return render_template('purchaseticket.html', ticket_info=ticket_info)
+    ticket_info = eval(ticket_info)
+    cursor = conn.cursor();
+    query = "SELECT MAX(ticket_id) FROM ticket"
+    cursor.execute(query)
+    ticket_id = cursor.fetchone()
+    ticket_id = ticket_id[0]+1
+    cursor.close()
+
+    email = session['email']
+
+    airline_name = ticket_info[0]
+    flight_num = ticket_info[1]
+    cursor = conn.cursor();
+    ticketdatainsertquery = ("INSERT INTO ticket (ticket_id, airline_name, flight_num) VALUES (\"{}\", \"{}\", \"{}\")")
+    cursor.execute(ticketdatainsertquery.format(ticket_id, airline_name,flight_num))
+    conn.commit()
+    cursor.close()
+
+    cursor = conn.cursor();
+    purchasesdatainsertquery = ("INSERT INTO purchases (ticket_id, customer_email, purchase_date) VALUES (\"{}\", \"{}\", '2019-02-02')")
+    cursor.execute(purchasesdatainsertquery.format(ticket_id, email,flight_num))
+    conn.commit()
+    cursor.close()
+
+    return render_template('purchaseticket.html', ticket_info=ticket_info, ticket_id=ticket_id)
 
 @app.route('/searchforflight')
 def searchforflight():
