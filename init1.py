@@ -439,8 +439,6 @@ def purchaseticket():
     ticket_id = ticket_id[0]+1
     cursor.close()
 
-    email = session['email']
-
     airline_name = ticket_info[0]
     flight_num = ticket_info[1]
     cursor = conn.cursor();
@@ -449,13 +447,21 @@ def purchaseticket():
     conn.commit()
     cursor.close()
 
+    d = date.today()
+    email = session['email']
     cursor = conn.cursor();
-    purchasesdatainsertquery = ("INSERT INTO purchases (ticket_id, customer_email, purchase_date) VALUES (\"{}\", \"{}\", '2019-02-02')")
-    cursor.execute(purchasesdatainsertquery.format(ticket_id, email,flight_num))
+    purchasesdatainsertquery = ("INSERT INTO purchases (ticket_id, customer_email, purchase_date) VALUES (\"{}\", \"{}\", \"{}\")")
+    cursor.execute(purchasesdatainsertquery.format(ticket_id, email,d))
     conn.commit()
     cursor.close()
 
-    return render_template('purchaseticket.html', ticket_info=ticket_info, ticket_id=ticket_id)
+    ##Html information
+    departure_aiport=ticket_info[2]
+    arrival_aiport=ticket_info[3]
+    departure_time=ticket_info[4]
+    arrival_time=ticket_info[5]
+    flight_status=ticket_info[6]
+    return render_template('purchaseticket.html', departure_aiport=departure_aiport,arrival_airport=arrival_aiport,departure_time=departure_time,arrival_time=arrival_time,ticket_info=ticket_info, ticket_id=ticket_id, d=d, airline_name=airline_name, flight_num=flight_num,email=email,flight_status=flight_status)
 
 @app.route('/searchforflight')
 def searchforflight():

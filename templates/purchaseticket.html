@@ -1,4 +1,27 @@
-{{ticket_info}}
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h2>Ticket Purchased - See below for your upcoming flight information!
+      <a href="/home" style="float: right; font-size:13px; padding-right: 10px">Go back to homepage</a>
+    </h2>
+    <p> Customer Email: {{email}}</p>
+    <p> Airline: {{airline_name}} </p>
+    <p> Flight Number: {{flight_num}}</p>
+    <p> FLIGHT FROM: {{departure_aiport}} TO {{arrival_airport}}</p>
+    <p> Departure Time: {{departure_time}}</p>
+    <p> Arrival Time: {{arrival_time}}</p>
+    <p> Flight Status: {{flight_status}}
+
+</div>
 
 
-{{ticket_id}}
+
+</body>
+</html>
