@@ -426,7 +426,15 @@ def searchforflight():
 
     return render_template('searchforflight.html')
 
+@app.route('createnewflight')
+def createnewflight():
 
+    return render_template('createnewflight.html')
+
+@app.route('changeflightstatus')
+def changeflightstatus():
+
+    return render_template('changeflightstatus.html')
 
 
 def isTuple(x): return type(x) == tuple
