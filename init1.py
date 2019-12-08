@@ -10,7 +10,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.3',
+conn = pymysql.connect(host='192.168.64.2',
                        user='root',
                        password='admin',
                        database='blog')
@@ -469,6 +469,7 @@ def trackmyspending():
         spending += i
 
     return render_template('trackmyspending.html', spending=spending)
+
 
 def isTuple(x): return type(x) == tuple
 
