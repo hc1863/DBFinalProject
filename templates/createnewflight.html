@@ -1,0 +1,24 @@
+<html>
+<head>
+</head>
+<body>
+<form action="/addflight" method="POST">
+	<input type="text" name = "airline_name" placeholder="email" required/><br>
+  <input type="number" name = "flight_num" placeholder="email" required/><br>
+  <input type="text" name = "departure_airport" placeholder="email" required/><br>
+  <input type="text" name = "departure_time" placeholder="email" required/><br>
+  <input type="text" name = "arrival_airport" placeholder="email" required/><br>
+  <input type="text" name = "arrival_time" placeholder="email" required/><br>
+  <input type="number" name = "price" placeholder="email" required/><br>
+  <input type="text" name = "status" placeholder="email" required/><br>
+  <input type="number" name = "airplane_id" placeholder="email" required/><br>
+
+	<input type="submit" value = Register />
+	<input type="reset"/>
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>
+<a href="/">Go back</a>
+</body>
+</html>
