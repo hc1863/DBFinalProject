@@ -10,7 +10,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -425,9 +425,10 @@ def baviewflights():
 
     return render_template('baviewflights.html', flightlist = templist)
 
-@app.route('/purchaseticket')
+@app.route('/purchaseticket', methods=['GET', 'POST'])
 def purchaseticket():
-    return render_template('purchaseticket.html')
+    ticket_info = request.form.get("ticketpurchase", None)
+    return render_template('purchaseticket.html', ticket_info=ticket_info)
 
 @app.route('/searchforflight')
 def searchforflight():
