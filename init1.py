@@ -432,7 +432,7 @@ def purchaseticket():
 
 @app.route('/searchforflight')
 def searchforflight():
-    # searchtype = 'flight_num_search'
+    searchtype = 'flight_num_search'
     return render_template('testpage1.html', searchtype = searchtype)
 
 @app.route('/createnewflight')
