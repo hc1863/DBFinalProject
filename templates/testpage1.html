@@ -10,20 +10,25 @@
 
 <div class="container">
   <h2>Upcoming Flights</h2>
-  <p>The .dropdown class is used to indicate a dropdown menu.</p>
-  <p>Use the .dropdown-menu class to actually build the dropdown menu.</p>
-  <p>To open the dropdown menu, use a button or a link with a class of .dropdown-toggle and data-toggle="dropdown".</p>
+  <p>Upcoming flight info </p>
+  <p> Search by flight number and depature date OR BY arrival and departure airport and departure date </p>
   <div class="dropdown">
     <html>
-      <body>
-        <form action="/testpage1" method="POST">
-          {% if error %}
-            <p class="error"><strong>Error:</strong> {{error}}</p>
+    <form action="/changesearch" method="POST">
+        <body>
+          {% if searchtype == 'Airport_search' %}
+            <button type="submit" name = "changesearch" value = "changesearch">Search by Flight Number!</button>
           {% endif %}
-          <div>
-            <input type="radio" name = "searchtype" value = "Airport_search" >Search Upcoming Flights by Arrival/Departure Airport <br>
-            <input type="radio" name = "searchtype" value = "flight_num_search">Search Upcoming Flights by Flight Number<br>
-          </div>
+          {% if searchtype == 'flight_num_search' %}
+            <button type="submit" name = "changesearch" value = "changesearch">Search by Arrival and Departure Airport!</button>
+          {% endif %}
+        </body>
+    </form>
+      <body>
+        {% if error %}
+          <p class="error"><strong>Error:</strong> {{error}}</p>
+        {% endif %}
+        <form action="/testpage1" method="POST">
           {% if searchtype == 'Airport_search' %}
             <label> Arrival Airport:
             <select name = "arrairport">
@@ -43,7 +48,7 @@
           {% if searchtype == 'flight_num_search' %}
             <div>
               <label>Flight Number:
-                <input type="text" name="flight_num">
+                <input type="number" name="flight_num">
               </label>
             </div>
           {% endif %}
@@ -54,21 +59,55 @@
     </html>
   </div>
   <div id="result">
-    {% if searchtype is defined %}
-        You have selected this searchtype: {{ searchtype }}
-    {% endif %}
+    <div>
     {% if arrairport is defined %}
-        You have selected: {{ arrairport }}
+        Arrival Airport selected: {{ arrairport }}
     {% endif %}
+    </div>
+    <div>
     {% if depairport is defined %}
-        You have selected: {{ depairport }}
+        Departure selected: {{ depairport }}
     {% endif %}
+    </div>
+    <div>
+    {% if flight_num is defined %}
+        Flight Number selected: {{ flight_num }}
+    {% endif %}
+    </div>
+    <div>
     {% if depdate is defined %}
-        You have selected: {{ depdate }}
+        Date selected: {{ depdate }}
     {% endif %}
+    </div>
     {% if finalflightdata is defined %}
-        You have selected: {{ finalflightdata }}
+    <table border="1" id = "flight_info" >
+      <tr>
+        <th>Airline Name</th>
+        <th>Flight Number</th>
+        <th>Departure Aiport</th>
+        <th>Arrival Aiport</th>
+        <th>Departure Time</th>
+        <th>Arrival Time</th>
+        <th>Flight Status</th>
+      </tr>
+      <tr>
+        {% for row in finalflightdata %}
+           <td>{{row[0]}}</td>
+           <td>{{row[1]}}</td>
+           <td>{{row[2]}}</td>
+           <td>{{row[3]}}</td>
+           <td>{{row[4]}}</td>
+           <td>{{row[5]}}</td>
+           <td>{{row[6]}}</td>
+           <td>{{row[7]}}</td>
+           <td>{{row[8]}}</td>
+           <td>{{row[9]}}</td>
+           <br>
+        {% endfor %}
+      </tr>
+      </table>
     {% endif %}
+
 
   </div>
 </div>
