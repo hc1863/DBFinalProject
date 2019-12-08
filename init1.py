@@ -444,6 +444,31 @@ def changeflightstatus():
 
     return render_template('changeflightstatus.html')
 
+@app.route('/trackmyspending')
+def trackmyspending():
+    cursor = conn.cursor()
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE customer_email=\"{}\""
+    cursor.execute(query.format(session['email']))
+    data = cursor.fetchall()
+    cursor.close()
+
+    temp1 = flatten(data)
+
+    templist = []
+    for i in temp1:
+        cursor = conn.cursor()
+        query = "SELECT price FROM flight WHERE flight_num = \"{}\""
+        cursor.execute(query.format(i))
+        d = cursor.fetchall()
+        cursor.close()
+        for j in d:
+            templist.append(j[0])
+
+    spending = 0
+    for i in templist:
+        spending += i
+
+    return render_template('trackmyspending.html', spending=spending)
 
 def isTuple(x): return type(x) == tuple
 
