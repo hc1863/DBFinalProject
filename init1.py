@@ -10,7 +10,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -93,7 +93,7 @@ def test():
             depairport = request.form.get("depairport", None)
             depdate = request.form.get("depdate", None)
             if depdate:
-                date_in = depdate # replace this string with whatever method or function collects your data
+                date_in = depdate
                 date_processing = date_in.replace('T', '-').replace(':', '-').split('-')
                 date_processing = [int(v) for v in date_processing]
                 depdate = datetime.datetime(*date_processing)
@@ -101,7 +101,10 @@ def test():
             flightinfoquery = ("SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status FROM flight WHERE status = 'Upcoming' AND arrival_airport = \"{}\" AND departure_airport = \"{}\" AND departure_time = \"{}\"")
             queryvariables = (arrairport, depairport, depdate)
             cursor.execute(flightinfoquery.format(arrairport, depairport, depdate))
-            flightdata = cursor.fetchmany()
+            finalflightdata = []
+            # for row in cursor.fetchall():
+            #     if row == 'airline_name'
+            flightdata = cursor.fetchall()
             cursor.close()
             finalflightdata = flightdata
             error = None
@@ -123,7 +126,7 @@ def test():
             cursor = conn.cursor()
             flightinfoquery = ("SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status FROM flight WHERE status = 'Upcoming' AND flight_num = \"{}\" AND departure_time = \"{}\"")
             cursor.execute(flightinfoquery.format(flight_num, depdate))
-            flightdata = cursor.fetchmany()
+            flightdata = cursor.fetchall()
             cursor.close()
             finalflightdata = flightdata
             error = None
@@ -183,6 +186,8 @@ def loginAuth():
 		#session is a built in
         session['email'] = email
         session['typeof'] = typeof
+        session['searchtype'] = searchtype
+        session['logged_in'] = True
 
         return redirect(url_for('home'))
     else:
@@ -361,8 +366,12 @@ def post():
 
 @app.route('/logout')
 def logout():
-	session.pop('email')
-	return redirect('/')
+    session.clear()
+    # session.pop('email')
+    # session.pop('username')
+    # session.pop('searchtype')
+    # session.pop('logged_in')
+    return redirect('/')
 
 @app.route('/viewflights')
 def viewflights():
@@ -418,13 +427,12 @@ def baviewflights():
 
 @app.route('/purchaseticket')
 def purchaseticket():
-
     return render_template('purchaseticket.html')
 
 @app.route('/searchforflight')
 def searchforflight():
-
-    return render_template('searchforflight.html')
+    searchtype = 'flight_num_search'
+    return render_template('testpage1.html', searchtype = searchtype)
 
 @app.route('/createnewflight')
 def createnewflight():

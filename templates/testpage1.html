@@ -9,7 +9,12 @@
 
 
 <div class="container">
-  <h2>Upcoming Flights</h2>
+  <h2>Search for Upcoming Flights
+    {% if session['logged_in'] == True %}
+      <!-- <a href="/" style="float: right; font-size:13px">Logout</a> -->
+      <a href="/home" style="float: right; font-size:13px; padding-right: 10px">Go back to homepage</a>
+    {% endif %}
+  </h2>
   <p>Upcoming flight info </p>
   <p> Search by flight number and depature date OR BY arrival and departure airport and departure date </p>
   <div class="dropdown">
@@ -80,6 +85,15 @@
     {% endif %}
     </div>
     {% if finalflightdata is defined %}
+    <style>
+      table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+      th, td {
+        padding: 10px;
+      }
+      </style>
     <table border="1" id = "flight_info" >
       <tr>
         <th>Airline Name</th>
@@ -89,22 +103,26 @@
         <th>Departure Time</th>
         <th>Arrival Time</th>
         <th>Flight Status</th>
+        {% if session['logged_in'] == True %}
+        <th> Purchase Ticket </th>
+        {% endif %}
       </tr>
+      {% for row in finalflightdata[:7] %}
       <tr>
-        {% for row in finalflightdata %}
-           <td>{{row[0]}}</td>
-           <td>{{row[1]}}</td>
-           <td>{{row[2]}}</td>
-           <td>{{row[3]}}</td>
-           <td>{{row[4]}}</td>
-           <td>{{row[5]}}</td>
-           <td>{{row[6]}}</td>
-           <td>{{row[7]}}</td>
-           <td>{{row[8]}}</td>
-           <td>{{row[9]}}</td>
-           <br>
+        {% for x in row %}
+           <td>{{x}}</td>
         {% endfor %}
+        {% if session['logged_in'] == True %}
+        <td>
+          <a href="/purchaseticket">
+            <div style="height:100%;width:100%; display:block">
+               Purchase a Ticket for this flight
+             </div>
+          </a>
+          {% endif %}
+        </td>
       </tr>
+      {% endfor %}
       </table>
     {% endif %}
 
