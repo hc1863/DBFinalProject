@@ -4,6 +4,8 @@
 from flask import Flask, render_template, request, session, url_for, redirect, flash
 import pymysql.cursors
 import datetime
+from datetime import date
+from datetime import timedelta
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -447,6 +449,8 @@ def changeflightstatus():
 
 @app.route('/trackmyspending')
 def trackmyspending():
+    d = date.today() - timedelta(days=365)
+
     cursor = conn.cursor()
     query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE customer_email=\"{}\""
     cursor.execute(query.format(session['email']))
@@ -469,7 +473,9 @@ def trackmyspending():
     for i in templist:
         spending += i
 
-    return render_template('trackmyspending.html', spending=spending)
+
+
+    return render_template('trackmyspending.html', spending=spending, d=d)
 
 
 def isTuple(x): return type(x) == tuple
