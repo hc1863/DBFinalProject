@@ -107,14 +107,14 @@
         <th> Purchase Ticket </th>
         {% endif %}
       </tr>
-      {% for row in finalflightdata[:7] %}
+      {% for row in finalflightdata %}
       <tr>
         {% for x in row %}
            <td>{{x}}</td>
         {% endfor %}
         {% if session['logged_in'] == True %}
         <td>
-          <a href="/purchaseticket">
+          <a href="/purchaseticket" id = {{testcounter}}>
             <div style="height:100%;width:100%; display:block">
                Purchase a Ticket for this flight
              </div>
