@@ -1,11 +1,12 @@
 #!C:/Users/lx615/AppData/Local/Programs/Python/Python38-32/python
 
 #Import Flask Library
-from flask import Flask, render_template, request, session, url_for, redirect, flash
+from flask import Flask, render_template, request, session, url_for, redirect, flash, Markup
 import pymysql.cursors
 import datetime
 from datetime import date
 from datetime import timedelta
+from time import strftime
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -378,7 +379,7 @@ def logout():
 @app.route('/viewflights')
 def viewflights():
     cursor = conn.cursor()
-    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE customer_email = \"{}\""
+    query = "SELECT DISTINCT flight_num FROM ticket NATURAL JOIN purchases WHERE customer_email = \"{}\""
     cursor.execute(query.format(session['email']))
     data = cursor.fetchall()
     cursor.close()
@@ -452,8 +453,8 @@ def trackmyspending():
     d = date.today() - timedelta(days=365)
 
     cursor = conn.cursor()
-    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE customer_email=\"{}\""
-    cursor.execute(query.format(session['email']))
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE customer_email=\"{}\" AND purchase_date > \"{}\""
+    cursor.execute(query.format(session['email'], d))
     data = cursor.fetchall()
     cursor.close()
 
@@ -477,6 +478,173 @@ def trackmyspending():
 
     return render_template('trackmyspending.html', spending=spending, d=d)
 
+@app.route('/testchart')
+def testchart():
+    today = date.today()
+    thismonth = int(strftime('%m')) - 1
+    firstday = today.replace(day=1)
+
+
+    lastm1 = get_lastday(today)
+    lastm2 = get_lastday(lastm1)
+    lastm3 = get_lastday(lastm2)
+    lastm4 = get_lastday(lastm3)
+    lastm5 = get_lastday(lastm4)
+
+#Last month purchases
+    cursor = conn.cursor()
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE purchase_date<\"{}\" AND purchase_date>=\"{}\""
+    cursor.execute(query.format(today, lastm1))
+    data = cursor.fetchall()
+    cursor.close()
+    testvar = flatten(data)
+
+    templist = []
+    for i in testvar:
+        cursor = conn.cursor()
+        query = "SELECT price FROM flight WHERE flight_num = \"{}\""
+        cursor.execute(query.format(i))
+        d = cursor.fetchall()
+        cursor.close()
+        for j in d:
+            templist.append(j[0])
+
+    spending = 0
+    for i in templist:
+        spending += i
+
+#2 months ago purchases
+    cursor = conn.cursor()
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE purchase_date<\"{}\" AND purchase_date>=\"{}\""
+    cursor.execute(query.format(lastm1, lastm2))
+    data = cursor.fetchall()
+    cursor.close()
+    testvar1 = flatten(data)
+
+    templist1 = []
+    for i in testvar1:
+        cursor = conn.cursor()
+        query = "SELECT price FROM flight WHERE flight_num = \"{}\""
+        cursor.execute(query.format(i))
+        d = cursor.fetchall()
+        cursor.close()
+        for j in d:
+            templist1.append(j[0])
+
+    spending1 = 0
+    for i in templist1:
+        spending1 += i
+
+#3 months ago purchases
+    cursor = conn.cursor()
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE purchase_date<\"{}\" AND purchase_date>=\"{}\""
+    cursor.execute(query.format(lastm2, lastm3))
+    data = cursor.fetchall()
+    cursor.close()
+    testvar2 = flatten(data)
+
+    templist2 = []
+    for i in testvar2:
+        cursor = conn.cursor()
+        query = "SELECT price FROM flight WHERE flight_num = \"{}\""
+        cursor.execute(query.format(i))
+        d = cursor.fetchall()
+        cursor.close()
+        for j in d:
+            templist2.append(j[0])
+
+    spending2 = 0
+    for i in templist2:
+        spending2 += i
+
+#4 months ago
+    cursor = conn.cursor()
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE purchase_date<\"{}\" AND purchase_date>=\"{}\""
+    cursor.execute(query.format(lastm3, lastm4))
+    data = cursor.fetchall()
+    cursor.close()
+    testvar3 = flatten(data)
+
+    templist3 = []
+    for i in testvar3:
+        cursor = conn.cursor()
+        query = "SELECT price FROM flight WHERE flight_num = \"{}\""
+        cursor.execute(query.format(i))
+        d = cursor.fetchall()
+        cursor.close()
+        for j in d:
+            templist3.append(j[0])
+
+    spending3 = 0
+    for i in templist3:
+        spending3 += i
+
+#5 months ago
+    cursor = conn.cursor()
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE purchase_date<\"{}\" AND purchase_date>=\"{}\""
+    cursor.execute(query.format(lastm4, lastm5))
+    data = cursor.fetchall()
+    cursor.close()
+    testvar4 = flatten(data)
+
+    templist4 = []
+    for i in testvar4:
+        cursor = conn.cursor()
+        query = "SELECT price FROM flight WHERE flight_num = \"{}\""
+        cursor.execute(query.format(i))
+        d = cursor.fetchall()
+        cursor.close()
+        for j in d:
+            templist4.append(j[0])
+
+    spending4 = 0
+    for i in templist4:
+        spending4 += i
+
+#This months spending
+    cursor = conn.cursor()
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE purchase_date>=\"{}\""
+    cursor.execute(query.format(firstday))
+    data = cursor.fetchall()
+    cursor.close()
+    lasttestvar = flatten(data)
+
+    lasttemplist = []
+    for i in lasttestvar:
+        cursor = conn.cursor()
+        query = "SELECT price FROM flight WHERE flight_num = \"{}\""
+        cursor.execute(query.format(i))
+        d = cursor.fetchall()
+        cursor.close()
+        for j in d:
+            lasttemplist.append(j[0])
+
+    lastspending = 0
+    for i in lasttemplist:
+        lastspending += i
+
+
+    x = thismonth - 5
+    startingmonth = x + 1
+
+    v = []
+    # for i in range(x + 1, thismonth + 2):
+    #     cursor = conn.cursor()
+    #     query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE customer_email=\"{}\" AND purchase_date > \"{}\""
+    #     cursor.execute(query.format(session['email'], d))
+    #     data = cursor.fetchall()
+    #     cursor.close()
+
+    months = ["January","February","March","April","May","June","July","August", "September", "October", "November", "December"]
+
+    testlist = []
+    for i in range(x, thismonth+1):
+        testlist.append(months[i])
+
+    testvar2 = session['email']
+
+    values = [spending4, spending3, spending2, spending1, spending, lastspending]
+    return render_template('testchart.html', labels = testlist, values = values, thismonth = testvar, testvar2 = testvar2)
 
 def isTuple(x): return type(x) == tuple
 
@@ -485,6 +653,10 @@ def flatten(T):
     elif len(T) == 0: return ()
     else: return flatten(T[0]) + flatten(T[1:])
 
+def get_lastday(current):
+    _first_day = current.replace(day=1)
+    prev_month_lastday = _first_day - datetime.timedelta(days=1)
+    return prev_month_lastday.replace(day=1)
 
 app.secret_key = 'some key that you will never guess'
 #Run the app on localhost port 5000

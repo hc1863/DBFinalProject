@@ -94,7 +94,8 @@ INSERT INTO `ticket` (`ticket_id`, `airline_name`, `flight_num`) VALUES
 (6, 'Jet Blue', 455),
 (7, 'Jet Blue', 455),
 (8, 'Jet Blue', 307),
-(9, 'Jet Blue', 455);
+(9, 'Jet Blue', 455),
+(10, 'Jet Blue', 139);
 
 
 --
@@ -110,7 +111,8 @@ INSERT INTO `purchases` (`ticket_id`, `customer_email`, `booking_agent_id`, `pur
 (6, 'one@nyu.edu', null, '2018-08-19'),
 (7, 'two@nyu.edu', null, '2018-08-23'),
 (8, 'one@nyu.edu', 1, '2018-11-15'),
-(9, 'Customer@nyu.edu', 1, '2018-06-19');
+(9, 'Customer@nyu.edu', 1, '2018-06-19'),
+(10, 'Customer@nyu.edu', null, '2018-12-20');
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
