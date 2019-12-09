@@ -114,15 +114,17 @@
         {% endfor %}
         {% if session['logged_in'] == True %}
         <td>
+          {% if session['typeof'] == 'booking_agent' %}
             <form action="/purchaseticket" method="POST">
-            <button type="/submit" name = "ticketpurchase" value = "{{row}}">{{row}}Purchase a Ticket for this flight</button>
+              Customer Email: <input type="text" name="customer_email">
+            <button type="/submit" name = "ticketpurchase" value = "{{row}}" style="margin-top: 12px">Purchase a Ticket for this flight</button>
           </form>
-          <!-- <a href="/purchaseticket" id = {{testcounter}}>
-            <div style="height:100%;width:100%; display:block">
-               Purchase a Ticket for this flight
-             </div>
-          </a> -->
+          {% else %}
+          <form action="/purchaseticket" method="POST">
+          <button type="/submit" name = "ticketpurchase" value = "{{row}}" style="margin-top: 12px">Purchase a Ticket for this flight</button>
+        </form>
           {% endif %}
+        {% endif %}
         </td>
       </tr>
       {% endfor %}

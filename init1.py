@@ -1,7 +1,12 @@
 #!C:/Users/lx615/AppData/Local/Programs/Python/Python38-32/python
 
 #Import Flask Library
+<<<<<<< HEAD
 from flask import Flask, render_template, request, session, url_for, redirect, flash, Markup
+=======
+from flask import Flask, render_template, request, session, url_for, redirect, flash
+from ast import literal_eval
+>>>>>>> c7003af335ce96577ecda82690952e3e5817cde0
 import pymysql.cursors
 import datetime
 from datetime import date
@@ -13,7 +18,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -430,13 +435,82 @@ def baviewflights():
 
 @app.route('/purchaseticket', methods=['GET', 'POST'])
 def purchaseticket():
-    ticket_info = request.form.get("ticketpurchase", None)
-    return render_template('purchaseticket.html', ticket_info=ticket_info)
+    if session['typeof'] == 'customer':
+        ticket_info = request.form.get("ticketpurchase", None)
+        ticket_info = eval(ticket_info)
+        cursor = conn.cursor();
+        query = "SELECT MAX(ticket_id) FROM ticket"
+        cursor.execute(query)
+        ticket_id = cursor.fetchone()
+        ticket_id = ticket_id[0]+1
+        cursor.close()
 
-@app.route('/searchforflight')
-def searchforflight():
-    searchtype = 'flight_num_search'
-    return render_template('testpage1.html', searchtype = searchtype)
+        airline_name = ticket_info[0]
+        flight_num = ticket_info[1]
+        cursor = conn.cursor();
+        ticketdatainsertquery = ("INSERT INTO ticket (ticket_id, airline_name, flight_num) VALUES (\"{}\", \"{}\", \"{}\")")
+        cursor.execute(ticketdatainsertquery.format(ticket_id, airline_name,flight_num))
+        conn.commit()
+        cursor.close()
+
+        d = date.today()
+        email = session['email']
+        cursor = conn.cursor();
+        purchasesdatainsertquery = ("INSERT INTO purchases (ticket_id, customer_email, purchase_date) VALUES (\"{}\", \"{}\", \"{}\")")
+        cursor.execute(purchasesdatainsertquery.format(ticket_id, email,d))
+        conn.commit()
+        cursor.close()
+
+        ##Html information
+        departure_aiport=ticket_info[2]
+        arrival_aiport=ticket_info[3]
+        departure_time=ticket_info[4]
+        arrival_time=ticket_info[5]
+        flight_status=ticket_info[6]
+        return render_template('purchaseticket.html', departure_aiport=departure_aiport,arrival_airport=arrival_aiport,departure_time=departure_time,arrival_time=arrival_time,ticket_info=ticket_info, ticket_id=ticket_id, d=d, airline_name=airline_name, flight_num=flight_num,email=email,flight_status=flight_status)
+
+    elif session['typeof'] == 'booking_agent':
+
+        cursor = conn.cursor()
+        query = "SELECT booking_agent_id from booking_agent WHERE email = \"{}\""
+        cursor.execute(query.format(session['email']))
+        booking_agent_id = cursor.fetchone()
+        booking_agent_id = booking_agent_id[0]
+        cursor.close()
+
+        ticket_info = request.form.get("ticketpurchase", None)
+        ticket_info = eval(ticket_info)
+        cursor = conn.cursor();
+        query = "SELECT MAX(ticket_id) FROM ticket"
+        cursor.execute(query)
+        ticket_id = cursor.fetchone()
+        ticket_id = ticket_id[0]+1
+        cursor.close()
+
+        airline_name = ticket_info[0]
+        flight_num = ticket_info[1]
+        cursor = conn.cursor();
+        ticketdatainsertqueryBA = ("INSERT INTO ticket (ticket_id, airline_name, flight_num) VALUES (\"{}\", \"{}\", \"{}\")")
+        cursor.execute(ticketdatainsertqueryBA.format(ticket_id, airline_name,flight_num))
+        conn.commit()
+        cursor.close()
+
+        d = date.today()
+        email = request.form.get("customer_email", None)
+        cursor = conn.cursor();
+        purchasesdatainsertquery = ("INSERT INTO purchases (ticket_id, customer_email, booking_agent_id, purchase_date) VALUES (\"{}\", \"{}\", \"{}\",\"{}\")")
+        cursor.execute(purchasesdatainsertquery.format(ticket_id, email,booking_agent_id,d))
+        conn.commit()
+        cursor.close()
+
+        ##Html information
+        departure_aiport=ticket_info[2]
+        arrival_aiport=ticket_info[3]
+        departure_time=ticket_info[4]
+        arrival_time=ticket_info[5]
+        flight_status=ticket_info[6]
+        return render_template('bapurchaseticket.html', departure_aiport=departure_aiport,arrival_airport=arrival_aiport,departure_time=departure_time,arrival_time=arrival_time,ticket_info=ticket_info, ticket_id=ticket_id, d=d, airline_name=airline_name, flight_num=flight_num,email=email,flight_status=flight_status, booking_agent_id=booking_agent_id)
+
 
 @app.route('/createnewflight')
 def createnewflight():
