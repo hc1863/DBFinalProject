@@ -659,6 +659,33 @@ def changeflightstatus():
         return render_template('ASchangestatusconfirmpage.html', flight_num=flight_num, status=status)
     return render_template('ASchangeflightstatus.html')
 
+@app.route('/ASaddairplane', methods=['GET', 'POST'])
+def ASaddairplane():
+    if request.method == "POST":
+        airline_name = request.form.get("airline_name", None)
+        airplane_id = request.form.get("airplane_id", None)
+        seats = request.form.get("seats", None)
+        cursor = conn.cursor();
+        addairplanequery = ("INSERT INTO `airplane` (`airline_name`, `airplane_id`, `seats`) VALUES (\"{}\", \"{}\", \"{}\")")
+        cursor.execute(addairplanequery.format(airline_name, airplane_id, seats))
+        conn.commit()
+        cursor.close()
+        return render_template('ASaddairplaneconfirmpage.html', airline_name=airline_name, airplane_id=airplane_id, seats=seats)
+    return render_template('ASaddairplane.html')
+
+@app.route('/ASaddairport', methods=['GET', 'POST'])
+def ASaddairport():
+    if request.method == "POST":
+        airport_name = request.form.get("airport_name", None)
+        airport_city = request.form.get("airport_city", None)
+        cursor = conn.cursor();
+        addairportquery = ("INSERT INTO `airport` (`airport_name`, `airport_city`) VALUES (\"{}\", \"{}\")")
+        cursor.execute(addairportquery.format(airport_name, airport_city))
+        conn.commit()
+        cursor.close()
+        return render_template('ASaddairportconfirmpage.html', airport_name=airport_name, airport_city=airport_city)
+    return render_template('ASaddairport.html')
+
 @app.route('/trackmyspending')
 def trackmyspending():
     d = date.today() - timedelta(days=365)
