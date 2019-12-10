@@ -16,7 +16,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -431,8 +431,7 @@ def baviewflights():
 
     return render_template('baviewflights.html', flightlist = templist)
 
-<<<<<<< HEAD
-=======
+
 
 @app.route('/ASviewflights',methods=['GET', 'POST'])
 def ASviewflights():
@@ -569,7 +568,6 @@ def AScreateflights():
     return render_template('AScreateflights.html', flightlist=data, date=mydate)
 
 
->>>>>>> bb1bb866d8de9fe447737803f5ddb85b9eeeb6f4
 @app.route('/purchaseticket', methods=['GET', 'POST'])
 def purchaseticket():
     if session['typeof'] == 'customer':
