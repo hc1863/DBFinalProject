@@ -1,24 +1,22 @@
 #!C:/Users/lx615/AppData/Local/Programs/Python/Python38-32/python
 
 #Import Flask Library
-<<<<<<< HEAD
 from flask import Flask, render_template, request, session, url_for, redirect, flash, Markup
-=======
-from flask import Flask, render_template, request, session, url_for, redirect, flash
 from ast import literal_eval
->>>>>>> c7003af335ce96577ecda82690952e3e5817cde0
 import pymysql.cursors
 import datetime
 from datetime import date
 from datetime import timedelta
 from time import strftime
+import time
+from dateutil.relativedelta import *
 
 #Initialize the app from Flask
 app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.3',
+conn = pymysql.connect(host='192.168.64.2',
                        user='root',
                        password='admin',
                        database='blog')
@@ -552,12 +550,61 @@ def trackmyspending():
 
     return render_template('trackmyspending.html', spending=spending, d=d)
 
-@app.route('/testchart')
+@app.route('/testchart', methods=['GET', 'POST'])
 def testchart():
     today = date.today()
     thismonth = int(strftime('%m')) - 1
     firstday = today.replace(day=1)
+    months = ["January","February","March","April","May","June","July","August", "September", "October", "November", "December"]
 
+
+    if request.method == "POST":
+        startmonth = request.form.get("start_date")
+        endmonth = request.form.get("end_date")
+
+        valuelist = []
+        monthlist = []
+        monthnumlist = []
+        monthactuallist = []
+
+        startmonth = datetime.datetime.strptime(startmonth, '%Y-%m-%d')
+        endmonth = datetime.datetime.strptime(endmonth, '%Y-%m-%d')
+
+        startmonth = startmonth.replace(day=1)
+        endmonth = endmonth.replace(day=1)
+
+        while (startmonth < endmonth):
+            monthlist.append(months[int(startmonth.strftime('%m')) - 1])
+            monthactuallist.append(startmonth)
+            monthnumlist.append(int(startmonth.strftime('%m')) - 1)
+            startmonth = startmonth+relativedelta(months=+1)
+
+        monthlist.append(months[int(startmonth.strftime('%m')) - 1])
+        monthactuallist.append(startmonth)
+        monthnumlist.append(int(startmonth.strftime('%m')) - 1)
+
+
+        for i in range(len(monthactuallist) - 1):
+            j = i + 1
+            cursor = conn.cursor()
+            query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE purchase_date>=\"{}\" AND purchase_date<\"{}\""
+            cursor.execute(query.format(monthactuallist[i], monthactuallist[j]))
+            data = cursor.fetchall()
+            cursor.close()
+            testvar1 = flatten(data)
+
+            templist1 = []
+            for i in testvar1:
+                cursor = conn.cursor()
+                query = "SELECT price FROM flight WHERE flight_num = \"{}\""
+                cursor.execute(query.format(i))
+                d = cursor.fetchall()
+                cursor.close()
+                for j in d:
+                    templist1.append(j[0])
+            valuelist.append(sum(templist1))
+
+        return render_template('testchart.html', labels = monthlist, values = valuelist)
 
     lastm1 = get_lastday(today)
     lastm2 = get_lastday(lastm1)
@@ -702,14 +749,6 @@ def testchart():
     startingmonth = x + 1
 
     v = []
-    # for i in range(x + 1, thismonth + 2):
-    #     cursor = conn.cursor()
-    #     query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE customer_email=\"{}\" AND purchase_date > \"{}\""
-    #     cursor.execute(query.format(session['email'], d))
-    #     data = cursor.fetchall()
-    #     cursor.close()
-
-    months = ["January","February","March","April","May","June","July","August", "September", "October", "November", "December"]
 
     testlist = []
     for i in range(x, thismonth+1):
@@ -718,9 +757,94 @@ def testchart():
     testvar2 = session['email']
 
     values = [spending4, spending3, spending2, spending1, spending, lastspending]
-    return render_template('testchart.html', labels = testlist, values = values, thismonth = testvar, testvar2 = testvar2)
+    return render_template('testchart.html', labels = testlist, values = values, thismonth = testvar)
+
+@app.route('/viewcommission', methods=['GET', 'POST'])
+def viewcommission():
+
+
+    today = date.today()
+    last30days = date.today() - datetime.timedelta(days=30)
+
+    cursor = conn.cursor()
+    query = "SELECT booking_agent_id FROM booking_agent WHERE email=\"{}\""
+    cursor.execute(query.format(session['email']))
+    data = cursor.fetchall()
+    cursor.close()
+    baid = flatten(data)[0]
+
+    if request.method == "POST":
+
+        startmonth = request.form.get("start_date")
+        endmonth = request.form.get("end_date")
+        startmonth1 = startmonth
+        endmonth1 = endmonth
+
+        startmonth = datetime.datetime.strptime(startmonth, '%Y-%m-%d')
+        endmonth = datetime.datetime.strptime(endmonth, '%Y-%m-%d')
+
+        cursor = conn.cursor()
+        query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id=\"{}\" AND purchase_date >= \"{}\" AND purchase_date <= \"{}\" "
+        cursor.execute(query.format(baid, startmonth, endmonth))
+        data = cursor.fetchall()
+        cursor.close()
+        flights = flatten(data)
+
+        numflights = len(flights)
+
+        totalcommission = []
+        for i in flights:
+            cursor = conn.cursor()
+            query = "SELECT price FROM flight WHERE flight_num = \"{}\""
+            cursor.execute(query.format(i))
+            d = cursor.fetchall()
+            cursor.close()
+            for j in d:
+                totalcommission.append(float(j[0])*.1)
+
+        total = sum(totalcommission)
+
+        av = check0(total, numflights)
+
+
+        return render_template('viewcommission.html', totcommrecieved=total, totticksold=numflights, avtick=av, startmonth1=startmonth1, endmonth1=endmonth1)
+
+
+    cursor = conn.cursor()
+    query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id=\"{}\" AND purchase_date > \"{}\" AND purchase_date <= \"{}\" "
+    cursor.execute(query.format(baid, last30days, today))
+    data = cursor.fetchall()
+    cursor.close()
+    flights = flatten(data)
+
+    numflights = len(flights)
+
+    totalcommission = []
+    for i in flights:
+        cursor = conn.cursor()
+        query = "SELECT price FROM flight WHERE flight_num = \"{}\""
+        cursor.execute(query.format(i))
+        d = cursor.fetchall()
+        cursor.close()
+        for j in d:
+            totalcommission.append(float(j[0])*.1)
+
+    total = sum(totalcommission)
+
+    av = check0(total, numflights)
+
+
+
+    return render_template('viewcommission.html', total=total, flights=numflights, av = av)
+
+
+
+#Other Functions
 
 def isTuple(x): return type(x) == tuple
+
+def check0(x, y):
+    return x/y if y else 0
 
 def flatten(T):
     if not isTuple(T): return (T,)

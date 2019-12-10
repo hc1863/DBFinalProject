@@ -1,16 +1,21 @@
 <head>
   <meta charset="utf-8" />
-  <title>Chart.js Example</title>
+  <title>Track My Spending</title>
   <!-- import plugin script -->
   <script src='static/Chart.min.js'></script>
 </head>
 
-<h1>Simple Line Chart</h1>
-{{thismonth}}
-{{testvar2}}
+<h1>Your Spending</h1>
+
+<form action="/testchart" method="POST">
+  <input type="date" name="start_date" placeholder="Starting Date" required><br>
+  <input type="date" name="end_date" placeholder="Ending Date" required><br>
+  <input type="submit" value="Search"/>
+</form>
+
 <!-- bar chart canvas element -->
 <canvas id="myChart" width="600" height="400"></canvas>
-<p id="caption">The chart is displaying a simple line chart.</p>
+<a href='/home'>Back to home</a>
 <script>
 // Global parameters:
 // do not resize the chart canvas when its container does (keep at 600x400px)
@@ -22,7 +27,7 @@ var chartData = {
              "{{item}}",
             {% endfor %}],
   datasets : [{
-      label: '{{ legend }}',
+      label: 'Dollar Amount',
       fill: true,
       lineTension: 0.1,
       backgroundColor: "rgba(75,192,192,0.4)",

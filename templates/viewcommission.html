@@ -1,0 +1,31 @@
+<html>
+<head>
+</head>
+<body>
+Total Commission for the past 30 days: {{total}} <br>
+Average Commission for the past 30 days: {{av}} <br>
+Number of tickets sold in the past 30 days: {{flights}} <br>
+
+<form action="/viewcommission" method="POST">
+  <input type="date" name="start_date" placeholder="Starting Date" required><br>
+  <input type="date" name="end_date" placeholder="Ending Date" required><br>
+  <input type="submit" value="Search"/>
+</form>
+{% if startmonth1 is defined %}
+{% if endmonth1 is defined %}
+{% if totcommrecieved is defined %}
+Total commission between {{startmonth1}} and {{endmonth1}}: {{totcommrecieved}} <br>
+{% endif %}
+{% if totticksold is defined %}
+Total tickets sold between {{startmonth1}} and {{endmonth1}}: {{totticksold}} <br>
+{% endif %}
+{% if avtick is defined %}
+Average commission between {{startmonth1}} and {{endmonth1}}: {{avtick}} <br>
+{% endif %}
+{% endif %}
+{% endif %}
+
+
+
+</body>
+</html>
