@@ -10,9 +10,11 @@ from datetime import timedelta
 from time import strftime
 import time
 from dateutil.relativedelta import *
+from flask_bootstrap import Bootstrap
 
 #Initialize the app from Flask
 app = Flask(__name__)
+Bootstrap(app)
 #testchange 1
 
 #Configure MySQL
