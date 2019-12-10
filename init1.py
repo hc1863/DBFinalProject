@@ -699,45 +699,82 @@ def ASviewagents():
     oldyear = date.today()+relativedelta(years=-1)
 
     cursor = conn.cursor()
-    query = "SELECT customer_email, COUNT(ticket_id) FROM purchases WHERE booking_agent_id = \"{}\" AND purchase_date <= \"{}\" GROUP BY customer_email"
-    cursor.execute(query.format(baid, oldmonth))
+    query = "SELECT booking_agent_id, COUNT(ticket_id) FROM purchases WHERE purchase_date >= \"{}\" AND booking_agent_id is not NULL GROUP BY booking_agent_id"
+    cursor.execute(query.format(oldmonth))
     data = cursor.fetchall()
     cursor.close()
-    test = data
-
-    cust = []
-    numtick = []
-
-    for i in data:
-        cust.append(i[0])
-        numtick.append(i[1])
-
-    if len(cust) > 5:
-        cust = cust[:5]
-    if len(numtick) > 5:
-        numtick = numtick[:5]
 
     cursor = conn.cursor()
-    query = "CREATE VIEW customer_flight AS SELECT flight_num, customer_email FROM ticket NATURAL JOIN purchases WHERE booking_agent_id=\"{}\" AND purchase_date <= \"{}\" "
-    cursor.execute(query.format(baid, oldyear))
-    query = "SELECT customer_email, sum(price) FROM flight NATURAL JOIN customer_flight GROUP BY customer_email"
-    cursor.execute(query)
+    query = "SELECT booking_agent_id, COUNT(ticket_id) FROM purchases WHERE purchase_date >= \"{}\" AND booking_agent_id is not NULL GROUP BY booking_agent_id"
+    cursor.execute(query.format(oldyear))
     data1 = cursor.fetchall()
-    query = "DROP VIEW customer_flight"
+    cursor.close()
+
+    newdict = {"No Individual Found 3":.1, "No Individual Found 2":.2, "No Individual Found 1":.3}
+    for i in data:
+        newdict[i[0]] = int(i[1])
+    list = [(k, v) for k, v in sorted(newdict.items(), key=lambda item: item[1], reverse=True)]
+    fagents = []
+
+    for i in range(3):
+        x = list[i][0]
+        cursor = conn.cursor()
+        query = "SELECT email FROM booking_agent WHERE booking_agent_id = \"{}\""
+        cursor.execute(query.format(x))
+        d = cursor.fetchall()
+        cursor.close()
+        d = flatten(d)
+        fagents.append(d)
+
+    newdict1 = {"No Individual Found 3":.1, "No Individual Found 2":.2, "No Individual Found 1":.3}
+    for i in data1:
+        newdict1[i[0]] = int(i[1])
+    list1 = [(k, v) for k, v in sorted(newdict1.items(), key=lambda item: item[1], reverse=True)]
+
+    fagents1 = []
+    for i in range(3):
+        x = list1[i][0]
+        cursor = conn.cursor()
+        query = "SELECT email FROM booking_agent WHERE booking_agent_id = \"{}\""
+        cursor.execute(query.format(x))
+        d = cursor.fetchall()
+        cursor.close()
+        d = flatten(d)
+        fagents1.append(d)
+
+    cursor = conn.cursor()
+    query = "CREATE VIEW bacomm AS SELECT flight_num, booking_agent_id FROM ticket NATURAL JOIN purchases WHERE purchase_date >= \"{}\""
+    cursor.execute(query.format(oldyear))
+    query = "SELECT booking_agent_id, sum(price) FROM flight NATURAL JOIN bacomm WHERE booking_agent_id IS NOT NULL GROUP BY booking_agent_id"
+    cursor.execute(query)
+    data2 = cursor.fetchall()
+    query = "DROP VIEW bacomm"
     cursor.execute(query)
     cursor.close()
-    tvar = data1
+    tvar = data2
 
-    cust1=[]
-    comm=[]
+    baid=[]
+    bacomm=[]
 
-    for i in data1:
-        cust1.append(i[0])
-        comm.append(int(i[1])*.1)
+    newdict2 = {"No Individual Found 3":.1, "No Individual Found 2":.2, "No Individual Found 1":.3}
+    for i in data2:
+        newdict2[i[0]] = int(i[1])*.1
+    list2 = [(k, v) for k, v in sorted(newdict2.items(), key=lambda item: item[1], reverse=True)]
+
+    fagents2 = []
+
+    for i in range(3):
+        x = list2[i][0]
+        cursor = conn.cursor()
+        query = "SELECT email FROM booking_agent WHERE booking_agent_id = \"{}\""
+        cursor.execute(query.format(x))
+        d = cursor.fetchall()
+        cursor.close()
+        d = flatten(d)
+        fagents2.append(d)
 
 
-
-    return render_template('viewtopcustomers.html', data=data, labels=cust, values=numtick, tvar=tvar, labels1=cust1, values1=comm)
+    return render_template('ASviewagents.html', l1 = fagents, l2 = fagents1, l3=fagents2, test = data, test1 = data1, test2 = data2)
 
 @app.route('/ASfreqcustomer')
 def ASfreqcustomer():
@@ -1180,7 +1217,7 @@ def viewtopdestinations():
     list = [(k, v) for k, v in sorted(newdict.items(), key=lambda item: item[1], reverse=True)]
 
     newdict1 = {"No Destination Entered 3":.1, "No Destination Entered 2":.2, "No Destination Entered 1":.3}
-    for i in data:
+    for i in data1:
         newdict1[i[0]] = i[1]
     list1 = [(k, v) for k, v in sorted(newdict1.items(), key=lambda item: item[1], reverse=True)]
 
