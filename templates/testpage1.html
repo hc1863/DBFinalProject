@@ -116,7 +116,7 @@
         <td>
           {% if session['typeof'] == 'booking_agent' %}
             <form action="/purchaseticket" method="POST">
-              Customer Email: <input type="text" name="customer_email">
+              Customer Email: <input type="email" name="customer_email">
             <button type="/submit" name = "ticketpurchase" value = "{{row}}" style="margin-top: 12px">Purchase a Ticket for this flight</button>
           </form>
           {% else %}
