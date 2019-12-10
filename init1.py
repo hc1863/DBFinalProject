@@ -16,7 +16,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -431,6 +431,87 @@ def baviewflights():
 
     return render_template('baviewflights.html', flightlist = templist)
 
+
+@app.route('/ASviewflights',methods=['GET', 'POST'])
+def ASviewflights():
+
+    cursor = conn.cursor()
+    query = "SELECT airline_name from airline_staff WHERE username = \"{}\""
+    cursor.execute(query.format(session['username']))
+    data = cursor.fetchone()
+    cursor.close()
+    airline_name = data[0]
+
+    date = datetime.datetime(2018,12,1,0,0,0)
+    dateplus30 = date+timedelta(days=30)
+
+
+    cursor = conn.cursor()
+    query = "SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status from flight where airline_name = \"{}\" and departure_time BETWEEN \"{}\" AND \"{}\" AND status='Upcoming'"
+    cursor.execute(query.format(airline_name, date, dateplus30))
+    data = cursor.fetchall()
+    cursor.close()
+    flightlist = data
+
+    cursor = conn.cursor()
+    query = "SELECT DISTINCT arrival_airport FROM flight"
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    arrival_airport = list(data)
+
+    cursor = conn.cursor()
+    query = "SELECT DISTINCT departure_airport FROM flight"
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    departure_airport = list(data)
+
+    if request.method == "POST":
+        arrairport = request.form.get("arrairport", None)
+        depairport = request.form.get("depairport", None)
+        fromdate = request.form.get("fromdate", None)
+        todate = request.form.get("todate", None)
+
+        error = None
+        if todate < fromdate:
+            error = 'Date Error - To date is less than from date'
+            return render_template('ASviewflights.html', flightlist = flightlist, date=date, arrival_airport = arrival_airport, departure_airport=departure_airport, error=error)
+
+        cursor = conn.cursor()
+        query = "SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status from flight where airline_name = \"{}\" AND departure_airport = \"{}\" AND arrival_airport = \"{}\" AND departure_time BETWEEN \"{}\" AND \"{}\""
+        cursor.execute(query.format(airline_name, depairport, arrairport,fromdate, todate))
+        data = cursor.fetchall()
+        cursor.close()
+        flightlist = data
+        return render_template('ASviewflights.html', flightlist = flightlist, date=date, arrival_airport = arrival_airport, departure_airport=departure_airport)
+
+    return render_template('ASviewflights.html', flightlist = flightlist, date=date, arrival_airport = arrival_airport, departure_airport=departure_airport)
+
+@app.route('/viewflightcustomerlist', methods=['GET', 'POST'])
+def viewflightcustomerlist():
+    ticket_info = request.form.get("custlist", None)
+    ticket_info = eval(ticket_info)
+    flight_num = ticket_info[1]
+    cursor = conn.cursor();
+    query = "SELECT name from customer WHERE email IN (SELECT customer_email from ticket NATURAL JOIN purchases where flight_num = \"{}\")"
+    cursor.execute(query.format(flight_num))
+    data = cursor.fetchall()
+    data=flatten(data)
+    cursor.close()
+    data=list(data)
+    listToStr = ', '.join([str(elem) for elem in data])
+    data=listToStr
+    ##Html information
+    airline_name = ticket_info[0]
+    departure_aiport=ticket_info[2]
+    arrival_aiport=ticket_info[3]
+    departure_time=ticket_info[4]
+    arrival_time=ticket_info[5]
+    flight_status=ticket_info[6]
+
+    return render_template('flightcustlist.html', data=data,departure_aiport=departure_aiport,arrival_airport=arrival_aiport,departure_time=departure_time,arrival_time=arrival_time,ticket_info=ticket_info,  airline_name=airline_name, flight_num=flight_num,flight_status=flight_status)
+    # return render_template('flightcustlist.html', ticket_info=ticket_info)
 @app.route('/purchaseticket', methods=['GET', 'POST'])
 def purchaseticket():
     if session['typeof'] == 'customer':
