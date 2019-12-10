@@ -977,6 +977,58 @@ def viewcommission():
     return render_template('viewcommission.html', total=total, flights=numflights, av = av)
 
 
+@app.route('/viewtopcustomers')
+def viewtopcustomers():
+
+    cursor = conn.cursor()
+    query = "SELECT booking_agent_id FROM booking_agent WHERE email=\"{}\""
+    cursor.execute(query.format(session['email']))
+    data = cursor.fetchall()
+    cursor.close()
+    baid = flatten(data)[0]
+
+    oldmonth = date.today()+relativedelta(months=-6)
+    oldyear = date.today()+relativedelta(years=-1)
+
+    cursor = conn.cursor()
+    query = "SELECT customer_email, COUNT(ticket_id) FROM purchases WHERE booking_agent_id = \"{}\" AND purchase_date <= \"{}\" GROUP BY customer_email"
+    cursor.execute(query.format(baid, oldmonth))
+    data = cursor.fetchall()
+    cursor.close()
+    test = data
+
+    cust = []
+    numtick = []
+
+    for i in data:
+        cust.append(i[0])
+        numtick.append(i[1])
+
+    if len(cust) > 5:
+        cust = cust[:5]
+    if len(numtick) > 5:
+        numtick = numtick[:5]
+
+    cursor = conn.cursor()
+    query = "CREATE VIEW customer_flight AS SELECT flight_num, customer_email FROM ticket NATURAL JOIN purchases WHERE booking_agent_id=\"{}\" AND purchase_date <= \"{}\" "
+    cursor.execute(query.format(baid, oldyear))
+    query = "SELECT customer_email, sum(price) FROM flight NATURAL JOIN customer_flight GROUP BY customer_email"
+    cursor.execute(query)
+    data1 = cursor.fetchall()
+    query = "DROP VIEW customer_flight"
+    cursor.execute(query)
+    cursor.close()
+    tvar = data1
+
+    cust1=[]
+    comm=[]
+
+    for i in data1:
+        cust1.append(i[0])
+        comm.append(int(i[1])*.1)
+
+    return render_template('viewtopcustomers.html', data=data, labels=cust, values=numtick, tvar=tvar, labels1=cust1, values1=comm)
+
 
 #Other Functions
 
