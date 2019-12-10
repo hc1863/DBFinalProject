@@ -16,7 +16,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -686,8 +686,6 @@ def ASaddairport():
         return render_template('ASaddairportconfirmpage.html', airport_name=airport_name, airport_city=airport_city)
     return render_template('ASaddairport.html')
 
-<<<<<<< HEAD
-=======
 @app.route('/ASviewagents')
 def ASviewagents():
     # cursor = conn.cursor()
@@ -741,8 +739,49 @@ def ASviewagents():
 
     return render_template('viewtopcustomers.html', data=data, labels=cust, values=numtick, tvar=tvar, labels1=cust1, values1=comm)
 
+@app.route('/ASfreqcustomer')
+def ASfreqcustomer():
+    mydate = date.today()
+    oldyear = date.today()+relativedelta(years=-1)
+    cursor = conn.cursor()
+    query = "CREATE VIEW customer_flight AS SELECT flight_num, customer_email FROM ticket NATURAL JOIN purchases"
+    cursor.execute(query)
+    query = "SELECT customer_email, COUNT(flight_num) FROM flight NATURAL JOIN customer_flight WHERE departure_time BETWEEN \"{}\" AND \"{}\" GROUP BY customer_email"
+    cursor.execute(query.format(oldyear,mydate))
+    data = cursor.fetchall()
+    query = "DROP VIEW customer_flight"
+    cursor.execute(query)
+    cursor.close()
+    return render_template('ASfreqcustomer.html', flightlist=data, date=mydate)
 
->>>>>>> 3a50501610191af36d9976d7e7c312f863b5bc49
+
+@app.route('/ASviewcustflightlist', methods=['GET', 'POST'])
+def ASviewcustflightlist():
+    cust_info = request.form.get("custflightlist", None)
+    cust_info = eval(cust_info)
+    customer_email = cust_info[0]
+    mydate = date.today()
+    oldyear = date.today()+relativedelta(years=-1)
+    cursor = conn.cursor()
+    query = "SELECT airline_name FROM airline_staff WHERE username = \"{}\""
+    cursor.execute(query.format(session['username']))
+    aname = cursor.fetchall()
+    cursor.close()
+    airline_name=flatten(aname)[0]
+    cursor = conn.cursor()
+    query = "CREATE VIEW customer_flight AS SELECT flight_num, customer_email FROM ticket NATURAL JOIN purchases where customer_email = \"{}\""
+    cursor.execute(query.format(customer_email))
+    query = "SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status FROM flight NATURAL JOIN customer_flight where airline_name = \"{}\""
+    cursor.execute(query.format(airline_name))
+    data = cursor.fetchall()
+    query = "DROP VIEW customer_flight"
+    cursor.execute(query)
+    cursor.close()
+    return render_template('AScustflightlist.html', flightlist=data, date=mydate, customer_email=customer_email, airline_name=airline_name)
+
+
+
+
 @app.route('/trackmyspending')
 def trackmyspending():
     d = date.today() - timedelta(days=365)

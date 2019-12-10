@@ -1,0 +1,22 @@
+<h2> Flight list for {{customer_email}}
+<a href="/ashome" style="float: right; font-size:13px; padding-right: 10px">Go back to homepage</a>
+</h2>
+<p> Below is a table of ALL flights taken by {{customer_email}} on {{airline_name}}
+<table border="1" id = "flight_info" >
+  <tr>
+    <th>Airline Name</th>
+    <th>Flight Number</th>
+    <th>Departure Aiport</th>
+    <th>Arrival Aiport</th>
+    <th>Departure Time</th>
+    <th>Arrival Time</th>
+    <th>Flight Status</th>
+  </tr>
+  {% for row in flightlist %}
+  <tr>
+    {% for x in row %}
+       <td>{{x}}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+  </table>

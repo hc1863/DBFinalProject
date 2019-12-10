@@ -1,0 +1,23 @@
+<h2> Most Frequent Customers (Past Year)
+<a href="/ashome" style="float: right; font-size:13px; padding-right: 10px">Go back to homepage</a>
+</h2>
+<p> Todays Date: {{date}}
+<table border="1" id = "flight_info" >
+  <tr>
+    <th>Customer Email</th>
+    <th>Number of flights taken (past year)</th>
+    <th>Customer Flight List</th>
+  </tr>
+  {% for row in flightlist %}
+  <tr>
+    {% for x in row %}
+       <td>{{x}}</td>
+    {% endfor %}
+    <td>
+    <form action="/ASviewcustflightlist" method="POST">
+    <button type="/submit" name = "custflightlist" value = "{{row}}"">View this customer's flightlist</button>
+    </form>
+    </td>
+  </tr>
+  {% endfor %}
+  </table>
