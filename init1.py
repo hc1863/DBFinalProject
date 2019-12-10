@@ -16,7 +16,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.3',
+conn = pymysql.connect(host='192.168.64.2',
                        user='root',
                        password='admin',
                        database='blog')
@@ -430,7 +430,6 @@ def baviewflights():
 
 
     return render_template('baviewflights.html', flightlist = templist)
-
 
 
 @app.route('/ASviewflights',methods=['GET', 'POST'])
@@ -1071,11 +1070,17 @@ def comparerev():
     lastmonth = today+relativedelta(months=-1)
     lastyear = today+relativedelta(years=-1)
 
+    cursor = conn.cursor()
+    query = "SELECT airline_name FROM airline_staff WHERE username = \"{}\""
+    cursor.execute(query.format(session['username']))
+    aname = cursor.fetchall()
+    cursor.close()
+    aname=flatten(aname)[0]
 
 
     cursor = conn.cursor()
-    query = "CREATE VIEW comparerev AS SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id is null AND purchase_date >\"{}\" "
-    cursor.execute(query.format(lastmonth))
+    query = "CREATE VIEW comparerev AS SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id is null AND purchase_date >\"{}\" AND airline_name = \"{}\""
+    cursor.execute(query.format(lastmonth, aname))
     query = "SELECT price FROM flight NATURAL JOIN comparerev"
     cursor.execute(query)
     data1 = cursor.fetchall()
@@ -1085,8 +1090,8 @@ def comparerev():
     set1 = sum(flatten(data1))
 
     cursor = conn.cursor()
-    query = "CREATE VIEW comparerev AS SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id is not null AND purchase_date>\"{}\""
-    cursor.execute(query.format(lastmonth))
+    query = "CREATE VIEW comparerev AS SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id is not null AND purchase_date>\"{}\" AND airline_name = \"{}\""
+    cursor.execute(query.format(lastmonth, aname))
     query = "SELECT price FROM flight NATURAL JOIN comparerev"
     cursor.execute(query)
     data1 = cursor.fetchall()
@@ -1099,8 +1104,8 @@ def comparerev():
     values = [set1, set2]
 
     cursor = conn.cursor()
-    query = "CREATE VIEW comparerev AS SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id is null AND purchase_date >\"{}\" "
-    cursor.execute(query.format(lastyear))
+    query = "CREATE VIEW comparerev AS SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id is null AND purchase_date >\"{}\" AND airline_name = \"{}\""
+    cursor.execute(query.format(lastyear, aname))
     query = "SELECT price FROM flight NATURAL JOIN comparerev"
     cursor.execute(query)
     data1 = cursor.fetchall()
@@ -1110,8 +1115,8 @@ def comparerev():
     set3 = sum(flatten(data1))
 
     cursor = conn.cursor()
-    query = "CREATE VIEW comparerev AS SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id is not null AND purchase_date>\"{}\""
-    cursor.execute(query.format(lastyear))
+    query = "CREATE VIEW comparerev AS SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE booking_agent_id is not null AND purchase_date>\"{}\" AND airline_name = \"{}\" "
+    cursor.execute(query.format(lastyear, aname))
     query = "SELECT price FROM flight NATURAL JOIN comparerev"
     cursor.execute(query)
     data1 = cursor.fetchall()
@@ -1124,6 +1129,57 @@ def comparerev():
 
 
     return render_template('comparerev.html', tvar=set1, labels=labels, values=values, values1=values1)
+
+@app.route('/viewreports', methods=['GET', 'POST'])
+def viewreports():
+
+    months = ["January","February","March","April","May","June","July","August", "September", "October", "November", "December"]
+
+    cursor = conn.cursor()
+    query = "SELECT airline_name FROM airline_staff WHERE username = \"{}\""
+    cursor.execute(query.format(session['username']))
+    aname = cursor.fetchall()
+    cursor.close()
+    aname=flatten(aname)[0]
+
+    if request.method == "POST":
+
+        valuelist = []
+        monthlist = []
+        monthactuallist = []
+
+        startmonth = request.form.get("start_date")
+        endmonth = request.form.get("end_date")
+
+        startmonth = datetime.datetime.strptime(startmonth, '%Y-%m-%d')
+        endmonth = datetime.datetime.strptime(endmonth, '%Y-%m-%d')
+
+        startmonth = startmonth.replace(day=1)
+        endmonth = endmonth.replace(day=1)
+
+        while (startmonth < endmonth):
+            monthlist.append(months[int(startmonth.strftime('%m')) - 1])
+            monthactuallist.append(startmonth)
+            startmonth = startmonth+relativedelta(months=+1)
+
+        monthlist.append(months[int(startmonth.strftime('%m')) - 1])
+        monthactuallist.append(startmonth)
+
+
+        for i in range(len(monthactuallist) - 1):
+            j = i + 1
+            cursor = conn.cursor()
+            query = "SELECT count(ticket_id) FROM ticket NATURAL JOIN purchases WHERE purchase_date>=\"{}\" AND purchase_date<\"{}\" AND airline_name=\"{}\""
+            cursor.execute(query.format(monthactuallist[i], monthactuallist[j], aname))
+            data = cursor.fetchall()
+            cursor.close()
+            testvar1 = flatten(data)[0]
+
+            valuelist.append(testvar1)
+
+        return render_template('viewreports.html', labels = monthlist, values = valuelist)
+
+    return render_template('viewreports.html', labels = [], values = [])
 
 #Other Functions
 
