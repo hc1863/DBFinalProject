@@ -1,0 +1,21 @@
+<html>
+<head>
+</head>
+<body>
+{% if newdict.length != 0  %}
+<h1>Destinations within the past 3 Months</h1>
+Top Destination: {{newdict[0][0]}} <br>
+Second Destination: {{newdict[1][0]}} <br>
+Third Destination: {{newdict[2][0]}} <br>
+{% endif %}
+
+{% if newdict1.length != 0 %}
+<h1>Destinations within the past Year</h1>
+Top Destination: {{newdict1[0][0]}} <br>
+Second Destination: {{newdict1[1][0]}} <br>
+Third Destination: {{newdict1[2][0]}} <br>
+{% endif %}
+
+<a href='/ashome'>Home</a>
+</body>
+</html>

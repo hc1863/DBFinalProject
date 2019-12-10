@@ -1,0 +1,78 @@
+<head>
+  <meta charset="utf-8" />
+  <title>Comparison of Revenue Earned</title>
+  <!-- import plugin script -->
+  <script src='static/Chart.min.js'></script>
+</head>
+
+<h1>Comparison of Revenue Earned</h1>
+{{values}}
+{{values1}}
+<!-- bar chart canvas element -->
+<canvas id="myChart" width="600" height="400"></canvas>
+<canvas id="myChart1" width="600" height="400"></canvas>
+<a href='/ashome'>Back to home</a>
+<script>
+// Global parameters:
+// do not resize the chart canvas when its container does (keep at 600x400px)
+Chart.defaults.global.responsive = false;
+
+// define the chart data
+var chartData = {
+  labels : [{% for item in labels %}
+             "{{item}}",
+            {% endfor %}],
+  datasets : [{
+      backgroundColor : [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)'
+      ],
+      data : [{% for item in values %}
+                {{item}},
+              {% endfor %}],
+      spanGaps: false
+  }]
+}
+var options = {
+
+}
+
+// get chart canvas
+var ctx = document.getElementById("myChart").getContext("2d");
+
+// create the chart using the chart canvas
+var myChart = new Chart(ctx, {
+  type: 'doughnut',
+  data: chartData,
+  options: options
+});
+
+var chartData1 = {
+  labels : [{% for item in labels %}
+             "{{item}}",
+            {% endfor %}],
+  datasets : [{
+      backgroundColor : [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 255, 235, 0.2)'
+      ],
+      data : [{% for item in values1 %}
+                {{item}},
+              {% endfor %}],
+      spanGaps: false
+  }]
+}
+var options1 = {
+
+}
+
+// get chart canvas
+var ctx = document.getElementById("myChart1").getContext("2d");
+
+// create the chart using the chart canvas
+var myChart1 = new Chart(ctx, {
+  type: 'doughnut',
+  data: chartData1,
+  options: options1
+});
+</script>
