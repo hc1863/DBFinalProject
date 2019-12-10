@@ -16,7 +16,7 @@ app = Flask(__name__)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
