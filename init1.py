@@ -442,13 +442,14 @@ def ASviewflights():
     cursor.close()
     airline_name = data[0]
 
-    date = datetime.datetime(2018,12,1,0,0,0)
-    dateplus30 = date+timedelta(days=30)
+    # date = datetime.datetime(2018,12,1,0,0,0)
+    mydate=date.today()
+    dateplus30 = mydate+timedelta(days=30)
 
 
     cursor = conn.cursor()
     query = "SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status from flight where airline_name = \"{}\" and departure_time BETWEEN \"{}\" AND \"{}\" AND status='Upcoming'"
-    cursor.execute(query.format(airline_name, date, dateplus30))
+    cursor.execute(query.format(airline_name, mydate, dateplus30))
     data = cursor.fetchall()
     cursor.close()
     flightlist = data
@@ -476,17 +477,19 @@ def ASviewflights():
         error = None
         if todate < fromdate:
             error = 'Date Error - To date is less than from date'
-            return render_template('ASviewflights.html', flightlist = flightlist, date=date, arrival_airport = arrival_airport, departure_airport=departure_airport, error=error)
-
+            return render_template('ASviewflights.html', flightlist = flightlist, date=mydate, arrival_airport = arrival_airport, departure_airport=departure_airport, error=error)
+        if arrairport == depairport:
+            error = 'Airport Selection Error - Arrival/Departure Airport are the same'
+            return render_template('ASviewflights.html', flightlist = flightlist, date=mydate, arrival_airport = arrival_airport, departure_airport=departure_airport, error=error)
         cursor = conn.cursor()
         query = "SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status from flight where airline_name = \"{}\" AND departure_airport = \"{}\" AND arrival_airport = \"{}\" AND departure_time BETWEEN \"{}\" AND \"{}\""
         cursor.execute(query.format(airline_name, depairport, arrairport,fromdate, todate))
         data = cursor.fetchall()
         cursor.close()
         flightlist = data
-        return render_template('ASviewflights.html', flightlist = flightlist, date=date, arrival_airport = arrival_airport, departure_airport=departure_airport)
+        return render_template('ASviewflights.html', flightlist = flightlist, date=mydate, arrival_airport = arrival_airport, departure_airport=departure_airport)
 
-    return render_template('ASviewflights.html', flightlist = flightlist, date=date, arrival_airport = arrival_airport, departure_airport=departure_airport)
+    return render_template('ASviewflights.html', flightlist = flightlist, date=mydate, arrival_airport = arrival_airport, departure_airport=departure_airport)
 
 @app.route('/viewflightcustomerlist', methods=['GET', 'POST'])
 def viewflightcustomerlist():
@@ -511,7 +514,59 @@ def viewflightcustomerlist():
     flight_status=ticket_info[6]
 
     return render_template('flightcustlist.html', data=data,departure_aiport=departure_aiport,arrival_airport=arrival_aiport,departure_time=departure_time,arrival_time=arrival_time,ticket_info=ticket_info,  airline_name=airline_name, flight_num=flight_num,flight_status=flight_status)
-    # return render_template('flightcustlist.html', ticket_info=ticket_info)
+
+@app.route('/AScreateflights',methods=['GET', 'POST'])
+def AScreateflights():
+
+    cursor = conn.cursor()
+    query = "SELECT airline_name from airline_staff WHERE username = \"{}\""
+    cursor.execute(query.format(session['username']))
+    data = cursor.fetchone()
+    cursor.close()
+    airline_name = data[0]
+
+    mydate=date.today()
+    # date = datetime.datetime(2018,12,1,0,0,0)
+    dateplus30 = mydate+timedelta(days=30)
+
+
+    cursor = conn.cursor()
+    query = "SELECT airline_name, flight_num, departure_airport, arrival_airport, departure_time, arrival_time, status from flight where airline_name = \"{}\" and departure_time BETWEEN \"{}\" AND \"{}\" AND status='Upcoming'"
+    cursor.execute(query.format(airline_name, mydate, dateplus30))
+    data = cursor.fetchall()
+    cursor.close()
+    flightlist = data
+
+    if request.method == "POST":
+        airline_name = request.form.get("airline_name", None)
+        flight_num = request.form.get("flight_num", None)
+        departure_airport = request.form.get("departure_airport", None)
+        departure_time = request.form.get("departure_time", None)
+        arrival_airport = request.form.get("arrival_airport", None)
+        arrival_time = request.form.get("arrival_time", None)
+        price = request.form.get("price", None)
+        status = request.form.get("status", None)
+        airplane_id = request.form.get("airplane_id", None)
+        if departure_time:
+            date_in = departure_time # replace this string with whatever method or function collects your data
+            date_processing = date_in.replace('T', '-').replace(':', '-').split('-')
+            date_processing = [int(v) for v in date_processing]
+            departure_time = datetime.datetime(*date_processing)
+        if arrival_time:
+            date_in = arrival_time # replace this string with whatever method or function collects your data
+            date_processing = date_in.replace('T', '-').replace(':', '-').split('-')
+            date_processing = [int(v) for v in date_processing]
+            arrival_time = datetime.datetime(*date_processing)
+        cursor = conn.cursor();
+        createflightquery = ("INSERT INTO `flight` (`airline_name`, `flight_num`, `departure_airport`, `departure_time`, `arrival_airport`, `arrival_time`, `price`, `status`, `airplane_id`) VALUES (\"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\")")
+        cursor.execute(createflightquery.format(airline_name, flight_num,departure_airport, departure_time, arrival_airport, arrival_time, price,status,airplane_id))
+        conn.commit()
+        cursor.close()
+        return render_template('AScreateflightsconfirmpage.html', airline_name=airline_name,flight_num=flight_num,departure_airport=departure_airport,arrival_airport=arrival_airport,departure_time=departure_time,arrival_time=arrival_time,price=price,status=status,airplane_id=airplane_id)
+
+    return render_template('AScreateflights.html', flightlist=data, date=mydate)
+
+
 @app.route('/purchaseticket', methods=['GET', 'POST'])
 def purchaseticket():
     if session['typeof'] == 'customer':
@@ -574,7 +629,7 @@ def purchaseticket():
         conn.commit()
         cursor.close()
 
-        d = date.today()
+        d = datetime.today()
         email = request.form.get("customer_email", None)
         cursor = conn.cursor();
         purchasesdatainsertquery = ("INSERT INTO purchases (ticket_id, customer_email, booking_agent_id, purchase_date) VALUES (\"{}\", \"{}\", \"{}\",\"{}\")")
@@ -591,15 +646,18 @@ def purchaseticket():
         return render_template('bapurchaseticket.html', departure_aiport=departure_aiport,arrival_airport=arrival_aiport,departure_time=departure_time,arrival_time=arrival_time,ticket_info=ticket_info, ticket_id=ticket_id, d=d, airline_name=airline_name, flight_num=flight_num,email=email,flight_status=flight_status, booking_agent_id=booking_agent_id)
 
 
-@app.route('/createnewflight')
-def createnewflight():
-
-    return render_template('createnewflight.html')
-
-@app.route('/changeflightstatus')
+@app.route('/ASchangestatus', methods=['GET', 'POST'])
 def changeflightstatus():
-
-    return render_template('changeflightstatus.html')
+    if request.method == "POST":
+        flight_num = request.form.get("flight_num", None)
+        status = request.form.get("status", None)
+        cursor = conn.cursor();
+        statusupdatequery = ("UPDATE flight set status = \"{}\" WHERE flight_num=\"{}\"")
+        cursor.execute(statusupdatequery.format(status, flight_num))
+        conn.commit()
+        cursor.close()
+        return render_template('ASchangestatusconfirmpage.html', flight_num=flight_num, status=status)
+    return render_template('ASchangeflightstatus.html')
 
 @app.route('/trackmyspending')
 def trackmyspending():

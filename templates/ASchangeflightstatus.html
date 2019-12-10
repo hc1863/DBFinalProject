@@ -1,0 +1,35 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <h2>Change Flight Status - Fill out below form to change status of a flight!
+      <a href="/ashome" style="float: right; font-size:13px">Go back to homepage</a>
+    </h2>
+    <form action="/ASchangestatus" method="POST">
+      <div style= "margin-top: 8px; margin-bottom: 8px">
+      <label>Flight Number:
+        <input type="number" name="flight_num" required>
+      </label>
+      </div>
+      <div style= "margin-top: 8px; margin-bottom: 8px">
+      <label>Change flight status to:
+        <input type="text" name="status" required>
+      </label>
+      </div>
+      <div style= "margin-top: 8px; margin-bottom: 8px">
+        <input type="submit" name="submit_button" value="Submit">
+      </div>
+    </form>
+
+
+</div>
+
+
+
+</body>
+</html>

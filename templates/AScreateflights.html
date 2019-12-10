@@ -1,0 +1,69 @@
+<h2> Create New Flights
+<a href="/ashome" style="float: right; font-size:13px; padding-right: 10px">Go back to homepage</a>
+</h2>
+<p> Your Upcoming Flights (Next 30 Days)
+<p> Todays Date: {{date}}
+
+<body>
+  <table border="1" id = "flight_info" style="margin-top: 7px; margin-bottom: 15px" >
+    <tr>
+      <th>Airline Name</th>
+      <th>Flight Number</th>
+      <th>Departure Aiport</th>
+      <th>Arrival Aiport</th>
+      <th>Departure Time</th>
+      <th>Arrival Time</th>
+      <th>Flight Status</th>
+    </tr>
+    {% for row in flightlist %}
+    <tr>
+      {% for x in row %}
+         <td>{{x}}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+</body>
+<body>
+<p> Fill out the below form to create a new flight!
+<form action="/AScreateflights" method="POST">
+  <label>Airline Name:
+    <input type="text" name="airline_name" required>
+  </label>
+  <div style= "margin-top: 8px; margin-bottom: 8px">
+  <label>Flight Number:
+    <input type="number" name="flight_num" required>
+  </label>
+  </div>
+  <div style= "margin-bottom: 8px">
+  <label>Departure Airport:
+    <input type="text" name="departure_airport" required>
+  </label>
+  </div>
+  <div style= "margin-bottom: 8px">
+  <label>Arrival Airport:
+    <input type="text" name="arrival_airport" required>
+  </label>
+  </div>
+  <div style= "margin-top: 8px; margin-bottom: 8px">
+  <label>Price:
+    <input type="number" name="price" required>
+  </label>
+  </div>
+  <div style= "margin-top: 8px; margin-bottom: 8px">
+  <label>Status:
+    <input type="text" name="status" required>
+  </label>
+  </div>
+  <div style= "margin-top: 8px; margin-bottom: 8px">
+  <label>Airplane ID:
+    <input type="number" name="airplane_id" required>
+  </label>
+  </div>
+  Departure Date: <input type="datetime-local" name="departure_time" required>
+  Arrival Date: <input type="datetime-local" name="arrival_time" required>
+  <div style= "margin-top: 8px; margin-bottom: 8px">
+    <input type="submit" name="submit_button" value="Submit">
+  </div>
+</form>
+</body>
