@@ -3,7 +3,9 @@
 </h2>
 <p> Your Upcoming Flights (Next 30 Days)
 <p> Todays Date: {{date}}
-
+{% if error %}
+  <p class="error"><strong>Error:</strong> {{error}}</p>
+{% endif %}
 <body>
   <table border="1" id = "flight_info" style="margin-top: 7px; margin-bottom: 15px" >
     <tr>

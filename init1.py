@@ -555,6 +555,7 @@ def AScreateflights():
 
     except KeyError:
         return render_template('notallowed.html')
+    error=None
     cursor = conn.cursor()
     query = "SELECT airline_name from airline_staff WHERE username = \"{}\""
     cursor.execute(query.format(session['username']))
@@ -594,14 +595,18 @@ def AScreateflights():
             date_processing = date_in.replace('T', '-').replace(':', '-').split('-')
             date_processing = [int(v) for v in date_processing]
             arrival_time = datetime.datetime(*date_processing)
-        cursor = conn.cursor();
-        createflightquery = ("INSERT INTO `flight` (`airline_name`, `flight_num`, `departure_airport`, `departure_time`, `arrival_airport`, `arrival_time`, `price`, `status`, `airplane_id`) VALUES (\"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\")")
-        cursor.execute(createflightquery.format(airline_name, flight_num,departure_airport, departure_time, arrival_airport, arrival_time, price,status,airplane_id))
-        conn.commit()
-        cursor.close()
+        try:
+            cursor = conn.cursor();
+            createflightquery = ("INSERT INTO `flight` (`airline_name`, `flight_num`, `departure_airport`, `departure_time`, `arrival_airport`, `arrival_time`, `price`, `status`, `airplane_id`) VALUES (\"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\", \"{}\")")
+            cursor.execute(createflightquery.format(airline_name, flight_num,departure_airport, departure_time, arrival_airport, arrival_time, price,status,airplane_id))
+            conn.commit()
+            cursor.close()
+        except:
+            error = "One or more fields in form contain invalid entries"
+            return redirect(url_for('AScreateflights'))
         return render_template('AScreateflightsconfirmpage.html', airline_name=airline_name,flight_num=flight_num,departure_airport=departure_airport,arrival_airport=arrival_airport,departure_time=departure_time,arrival_time=arrival_time,price=price,status=status,airplane_id=airplane_id)
 
-    return render_template('AScreateflights.html', flightlist=data, date=mydate)
+    return render_template('AScreateflights.html', flightlist=data, date=mydate, error=error)
 
 
 @app.route('/purchaseticket', methods=['GET', 'POST'])
@@ -708,11 +713,15 @@ def changeflightstatus():
     if request.method == "POST":
         flight_num = request.form.get("flight_num", None)
         status = request.form.get("status", None)
-        cursor = conn.cursor();
-        statusupdatequery = ("UPDATE flight set status = \"{}\" WHERE flight_num=\"{}\"")
-        cursor.execute(statusupdatequery.format(status, flight_num))
-        conn.commit()
-        cursor.close()
+        try:
+            cursor = conn.cursor();
+            statusupdatequery = ("UPDATE flight set status = \"{}\" WHERE flight_num=\"{}\"")
+            cursor.execute(statusupdatequery.format(status, flight_num))
+            conn.commit()
+            cursor.close()
+        except:
+            error = "One or more fields in form contain invalid entries"
+            return redirect(url_for('ASchangestatus'))
         return render_template('ASchangestatusconfirmpage.html', flight_num=flight_num, status=status)
     return render_template('ASchangeflightstatus.html')
 
@@ -729,11 +738,15 @@ def ASaddairplane():
         airline_name = request.form.get("airline_name", None)
         airplane_id = request.form.get("airplane_id", None)
         seats = request.form.get("seats", None)
-        cursor = conn.cursor();
-        addairplanequery = ("INSERT INTO `airplane` (`airline_name`, `airplane_id`, `seats`) VALUES (\"{}\", \"{}\", \"{}\")")
-        cursor.execute(addairplanequery.format(airline_name, airplane_id, seats))
-        conn.commit()
-        cursor.close()
+        try:
+            cursor = conn.cursor();
+            addairplanequery = ("INSERT INTO `airplane` (`airline_name`, `airplane_id`, `seats`) VALUES (\"{}\", \"{}\", \"{}\")")
+            cursor.execute(addairplanequery.format(airline_name, airplane_id, seats))
+            conn.commit()
+            cursor.close()
+        except:
+            error = "One or more fields in form contain invalid entries"
+            return redirect(url_for('ASaddairplane'))
         return render_template('ASaddairplaneconfirmpage.html', airline_name=airline_name, airplane_id=airplane_id, seats=seats)
     return render_template('ASaddairplane.html')
 
@@ -749,11 +762,15 @@ def ASaddairport():
     if request.method == "POST":
         airport_name = request.form.get("airport_name", None)
         airport_city = request.form.get("airport_city", None)
-        cursor = conn.cursor();
-        addairportquery = ("INSERT INTO `airport` (`airport_name`, `airport_city`) VALUES (\"{}\", \"{}\")")
-        cursor.execute(addairportquery.format(airport_name, airport_city))
-        conn.commit()
-        cursor.close()
+        try:
+            cursor = conn.cursor();
+            addairportquery = ("INSERT INTO `airport` (`airport_name`, `airport_city`) VALUES (\"{}\", \"{}\")")
+            cursor.execute(addairportquery.format(airport_name, airport_city))
+            conn.commit()
+            cursor.close()
+        except:
+            error = "One or more fields in form contain invalid entries"
+            return redirect(url_for('ASaddairport'))
         return render_template('ASaddairportconfirmpage.html', airport_name=airport_name, airport_city=airport_city)
     return render_template('ASaddairport.html')
 
