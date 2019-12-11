@@ -19,7 +19,7 @@ Bootstrap(app)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -1142,7 +1142,7 @@ def testchart():
 @app.route('/viewcommission', methods=['GET', 'POST'])
 def viewcommission():
     try:
-        if session['typeof'] != "customer":
+        if session['typeof'] != "booking_agent":
 
             return render_template('notallowed.html')
 
@@ -1406,7 +1406,7 @@ def viewreports():
             return render_template('notallowed.html')
 
     except KeyError:
-        return render_template('notallowed.html')   
+        return render_template('notallowed.html')
     months = ["January","February","March","April","May","June","July","August", "September", "October", "November", "December"]
 
     cursor = conn.cursor()
