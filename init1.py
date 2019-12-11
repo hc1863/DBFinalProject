@@ -18,7 +18,7 @@ Bootstrap(app)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.3',
+conn = pymysql.connect(host='192.168.64.2',
                        user='root',
                        password='admin',
                        database='blog')
@@ -222,6 +222,7 @@ def asloginAuth():
 		#creates a session for the the user
 		#session is a built in
         session['username'] = username
+        session['typeof'] = "airline_staff"
         return redirect(url_for('ashome'))
     else:
 		#returns an error message to the html page
@@ -690,6 +691,9 @@ def ASaddairport():
 
 @app.route('/ASviewagents')
 def ASviewagents():
+    if session['typeof'] != "airline_staff"
+
+        return render_template('notallowed.html')
     # cursor = conn.cursor()
     # query = "SELECT booking_agent_id FROM booking_agent WHERE email=\"{}\""
     # cursor.execute(query.format(session['email']))
