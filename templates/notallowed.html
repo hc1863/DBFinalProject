@@ -1,0 +1,14 @@
+<html>
+<head>
+</head>
+<body>
+
+  You are not allowed on this page
+  {% if session['typeof'] is defined %}
+  <a href="/home">Back to home</a>
+  {% else %}
+  <a href="/">Back to home</a>
+  {% endif %}
+</body>
+
+</html>

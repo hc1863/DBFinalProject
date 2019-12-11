@@ -6,19 +6,22 @@
 
 
 <h1>Welcome {{username}}</h1>
-{% if typeof == "customer" %}
+{% if session['typeof'] == "customer" %}
 
 <a href='/viewflights'>View Flights</a>
 <a href='/testchart'>Track My Spending</a>
 <a href='/testpage1'>Search Flights/Purchase Tickets</a>
 
-{% else %}
+{% elif session['typeof'] == 'booking_agent' %}
 
 <a href='/baviewflights'>View Flights</a>
 <a href='/viewcommission'>View Commission</a>
 <a href='/viewtopcustomers'>View Top Customers</a>
 <a href='/testpage1'>Search Flights/Purchase Tickets</a>
 
+{% else %}
+
+Nothing here
 
 {% endif %}
 

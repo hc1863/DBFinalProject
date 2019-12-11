@@ -691,9 +691,15 @@ def ASaddairport():
 
 @app.route('/ASviewagents')
 def ASviewagents():
-    if session['typeof'] != "airline_staff"
 
+    try:
+        if session['typeof'] != "airline_staff":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
         return render_template('notallowed.html')
+
     # cursor = conn.cursor()
     # query = "SELECT booking_agent_id FROM booking_agent WHERE email=\"{}\""
     # cursor.execute(query.format(session['email']))
