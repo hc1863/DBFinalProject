@@ -1,16 +1,46 @@
-<head>
+{% extends "layoutlegacy.html" %}
+{% block head %}
+{{super()}}
   <meta charset="utf-8" />
   <title>Top Customers</title>
   <!-- import plugin script -->
-  <script src='static/Chart.min.js'></script>
-</head>
+  <script src='static/js/Chart.min.js'></script>
 
-<h1>Top Customers</h1>
+{% endblock %}
+{% block header %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <a class="navbar-brand" href="#">Database Final Project</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor01">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#"> <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#"></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#"></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#"></a>
+      </li>
+    </ul>
+    <button type="button" onclick="location.href='/home'" class="btn btn-secondary">Back to Home</button>
+  </div>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="jumbotron">
+<h1 class="display-6">Top Customers</h1>
  <br>
 <!-- bar chart canvas element -->
-<canvas id="myChart" width="600" height="400"></canvas>
-<canvas id="myChart1" width="600" height="400"></canvas>
-<a href='/home'>Back to home</a>
+<canvas id="myChart" width="600" height="400" style="display:inline-block;"></canvas>
+<canvas id="myChart1" width="600" height="400" style="display:inline-block;"></canvas>
+</div>
 <script>
 // Global parameters:
 // do not resize the chart canvas when its container does (keep at 600x400px)
@@ -24,7 +54,7 @@ var chartData = {
              "{{item}}",
             {% endfor %}],
   datasets : [{
-      label: 'Dollar Amount',
+      label: 'Number of Tickets',
       fill: true,
       lineTension: 0.1,
       backgroundColor: "rgba(75,192,192,0.4)",
@@ -63,7 +93,7 @@ var chartData1 = {
              "{{item}}",
             {% endfor %}],
   datasets : [{
-      label: 'Dollar Amount',
+      label: 'Total Commission',
       fill: true,
       lineTension: 0.1,
       backgroundColor: "rgba(75,192,192,0.4)",
@@ -97,3 +127,4 @@ var myChart1 = new Chart(ctx1, {
   data: chartData1,
 });
 </script>
+{% endblock %}

@@ -1,26 +1,48 @@
-<html>
-<head>
-</head>
-<body>
+{% extends "layoutlegacy.html"%}
+{% block header %}{% endblock %}
+{% block content %}
+<div align="center">
+<div style="text-align:center; width:30% ;"class="jumbotron">
 <form action="/asregisterAuth" method="POST">
-	<input type="text" name = "username" placeholder="username" required/> <br>
-	<input type="password" name = "password" placeholder="password" required/><br>
-	<input type="text" name = "first_name" placeholder="first name" required/><br>
-	<input type="text" name="last_name" placeholder="last name" required/><br>
+	<fieldset>
+		<div class="form-group">
+			<label for="exampleInputEmail1" style="float:left;">Username</label>
+			<input required type="text" name = "username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Username">
+		</div>
+		<div class="form-group">
+			<label for="exampleInputPassword1" style="float:left;">Password</label>
+			<input required type="password" name = "password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+		</div>
+		<div class="form-row">
+			<div class="col">
+				<input required type="text" name="first_name" class="form-control" placeholder="First name">
+			</div>
+			<div class="col">
+				<input required type="text" name="last_name" class="form-control" placeholder="Last name">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="dob" style="float:left;">Date of Birth</label>
+			<input required type="date" name = "date_of_birth" class="form-control" id="dob" placeholder="Date of Birth">
+		</div>
+	<div class="form-group">
+		<label for="exampleSelect2">Airline</label>
+			<select name="airline_name" class="form-control" id="exampleSelect2">
+				{% for aname in airlinenames %}
+		    <option value={{aname[0]}} SELECTED>{{aname[0]}}</option>
+		    {% endfor %}
+			</select>
+	</div>
 
-	Date of Birth: <input type="date" name="date_of_birth" placeholder="DoB" required/><br>
-  <select name="airline_name" required>
-    {% for aname in airlinenames %}
-    <option value={{aname[0]}} SELECTED>{{aname[0]}}</option>
-    {% endfor %}
-  </select>
-
-	<input type="submit" value = Register />
-	<input type="reset"/>
+	<button type="submit" class="btn btn-primary" style="margin:10px;">Register</button>
+	<button type="reset" class="btn btn-primary">Reset</button>
+</fieldset>
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>
 	{% endif %}
 </form>
 <a href="/">Go back</a>
-</body>
-</html>
+</div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}

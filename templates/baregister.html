@@ -1,19 +1,33 @@
-<html>
-<head>
-</head>
-<body>
+{% extends "layoutlegacy.html"%}
+{% block header %}{% endblock %}
+{% block content %}
+<div align="center">
+<div style="text-align:center; width:30% ;"class="jumbotron">
 <form action="/baregisterAuth" method="POST">
-	<input type="email" name = "email" placeholder="email" required/><br>
-	<input type="password" name = "password" placeholder="password" required/><br>
-	<input type="number" name="booking_agent_id" placeholder="Booking Agent ID" required/><br>
+	<fieldset>
+		<div class="form-group">
+			<label for="exampleInputEmail1" style="float:left;">Email address</label>
+			<input required type="email" name = "email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Email">
+		</div>
+		<div class="form-group">
+			<label for="exampleInputPassword1" style="float:left;">Password</label>
+			<input required type="password" name = "password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+		</div>
+		<div class="form-group">
+			<label for="baid" style="float:left;">Booking Agent ID</label>
+			<input required type="number" name = "booking_agent_id" class="form-control" id="baid" placeholder="Booking Agent ID">
+		</div>
 
+			<button type="submit" class="btn btn-primary" style="margin:10px;">Register</button>
+			<button type="reset" class="btn btn-primary">Reset</button>
 
-	<input type="submit" value = Register />
-	<input type="reset"/>
+		</fieldset>
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>
 	{% endif %}
 </form>
 <a href="/">Go back</a>
-</body>
-</html>
+</div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}

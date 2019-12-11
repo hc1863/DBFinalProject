@@ -274,7 +274,7 @@ def registerAuth():
         conn.commit()
         cursor.close()
         flash("You are logged in")
-        return render_template('index.html')
+        return render_template('home.html')
 
 
 @app.route('/baregisterAuth', methods=['GET', 'POST'])
@@ -304,11 +304,11 @@ def baregisterAuth():
         return render_template('baregister.html', error = error)
     else:
         ins = "INSERT INTO booking_agent VALUES(\'{}\', \'{}\', \'{}\')"
-        cursor.execute(ins.format(email, name, baid))
+        cursor.execute(ins.format(email, password, baid))
         conn.commit()
         cursor.close()
         flash("You are logged in")
-        return render_template('index.html')
+        return render_template('home.html')
 
 @app.route('/asregisterAuth', methods=['GET', 'POST'])
 def asregisterAuth():
@@ -344,7 +344,7 @@ def asregisterAuth():
         conn.commit()
         cursor.close()
         flash("You are logged in")
-        return render_template('index.html')
+        return render_template('ashome.html')
 
 @app.route('/home')
 def home():
@@ -1212,9 +1212,8 @@ def viewcommission():
             for j in d:
                 totalcommission.append(float(j[0])*.1)
 
-        total = sum(totalcommission)
-
-        av = check0(total, numflights)
+        total = round(sum(totalcommission), 2)
+        av =  round(check0(total, numflights), 2)
 
 
         return render_template('viewcommission.html', totcommrecieved=total, totticksold=numflights, avtick=av, startmonth1=startmonth1, endmonth1=endmonth1)
@@ -1239,9 +1238,9 @@ def viewcommission():
         for j in d:
             totalcommission.append(float(j[0])*.1)
 
-    total = sum(totalcommission)
+    total = round(sum(totalcommission), 2)
 
-    av = check0(total, numflights)
+    av = round(check0(total, numflights), 2)
 
 
 

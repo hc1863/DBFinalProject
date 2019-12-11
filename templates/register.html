@@ -1,33 +1,72 @@
-<html>
-<head>
-</head>
-<body>
+{% extends "layoutlegacy.html"%}
+{% block header %}{% endblock %}
+{% block content %}
+<div align="center">
+<div style="text-align:center; width:30% ;"class="jumbotron">
 <form action="/registerAuth" method="POST">
-	<input type="text" name = "name" placeholder="name" required/> </br>
-	<input type="password" name = "password" placeholder="password" required/></br>
-	<input type="email" name = "email" placeholder="email" required/></br>
-	<input type="tel" name="phone_number" placeholder="phone" required/></br>
+	<fieldset>
+		<div class="form-group">
+			<label for="exampleInputEmail1" style="float:left;">Email address</label>
+			<input required type="email" name = "email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+			<small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+		</div>
+		<div class="form-group">
+			<label for="exampleInputPassword1" style="float:left;">Password</label>
+			<input required type="password" name = "password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+		</div>
+		<div class="form-group">
+			<label for="name1" style="float:left;">Name</label>
+			<input required type="text" name = "name" class="form-control" id="name1" placeholder="Name">
+		</div>
+		<div class="form-group">
+			<label for="phone1" style="float:left;">Phone Number</label>
+			<input required type="tel" name = "phone_number" class="form-control" id="phone1" placeholder="Phone Number">
+		</div>
+		<div class="form-group">
+			<label for="ppnum" style="float:left;">Passport Number</label>
+			<input required type="text" name = "passport_number" class="form-control" id="ppnum" placeholder="Passport Number">
+		</div>
+		<div class="form-group">
+			<label for="ppcount" style="float:left;">Passport Country</label>
+			<input required type="text" name = "passport_country" class="form-control" id="ppcount" placeholder="Passport Country">
+		</div>
+		<div class="form-group">
+			<label for="ppdate" style="float:left;">Passport Expiration</label>
+			<input required type="date" name = "passport_expiration" class="form-control" id="ppdate" placeholder="Passport Expiration">
+		</div>
+		<div class="form-group">
+			<label for="dob" style="float:left;">Date of Birth</label>
+			<input required type="date" name = "date_of_birth" class="form-control" id="dob" placeholder="Date of Birth">
+		</div>
+		<div class="form-group">
+			<label for="street" style="float:left;">Street</label>
+			<input required type="text" name = "street" class="form-control" id="street" placeholder="Street">
+		</div>
+		<div class="form-row">
+			<div class="col-7">
+				<input required type="text" name="city" class="form-control" placeholder="City">
+			</div>
+			<div class="col">
+				<input required type="text" name="state" class="form-control" placeholder="State">
+			</div>
+			<div class="col">
+				<input type="number" name="building_number" class="form-control" placeholder="#">
+			</div>
+		</div>
 
-	<input type="text" name="passport_number" placeholder="passport number" required/></br>
-	<input type="text" name="passport_country" placeholder="passport country" required/></br>
-	Passport Expiration: <input type="date" name="passport_expiration" placeholder="passport expiration" required/></br>
 
-	Date of Birth: <input type="date" name="date_of_birth" placeholder="DoB" required/></br>
+	<button type="submit" class="btn btn-primary" style="margin:10px;">Register</button>
+	<button type="reset" class="btn btn-primary">Reset</button>
 
-	<input type='text' name="street" placeholder="street" required/></br>
-	<input type="text" name="city" placeholder="city" required/></br>
-	<input type="text" name="state" placeholder="state" required/></br>
-	<input type="number" name="building_number" placeholder="Building Number" required/></br>
-
-
-	<input type="submit" value = Register />
-	<input type="reset"/>
+</fieldset>
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>
 	{% endif %}
 </form>
+<a href="/baregister">I am a Booking Agent</a><br>
+<a href="/asregister">I am an Airline Staff member</a><br>
 <a href="/">Go back</a>
-<a href="/baregister">I am a Booking Agent</a>
-<a href="/asregister">I am an Airline Staff member</a>
-</body>
-</html>
+</div>
+</div>
+{% endblock %}
+{% block footer %}{% endblock %}

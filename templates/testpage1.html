@@ -15,10 +15,10 @@
         <form action="/changesearch" method="POST">
             <body>
               {% if searchtype == 'Airport_search' %}
-                <button type="submit" name = "changesearch" value = "changesearch">Search by Flight Number!</button>
+                <button type="submit" class="btn btn-outline-primary" name = "changesearch" value = "changesearch">Search by Flight Number!</button>
               {% endif %}
               {% if searchtype == 'flight_num_search' %}
-                <button type="submit" name = "changesearch" value = "changesearch">Search by Arrival and Departure Airport!</button>
+                <button type="submit" class="btn btn-outline-primary" name = "changesearch" value = "changesearch">Search by Arrival and Departure Airport!</button>
               {% endif %}
             </body>
         </form>
@@ -27,16 +27,19 @@
               <p class="error"><strong>Error:</strong> {{error}}</p>
             {% endif %}
             <form action="/testpage1" method="POST">
+              <fieldset>
+                <div class="form-row">
               {% if searchtype == 'Airport_search' %}
+
                 <label> Arrival Airport:
-                <select name = "arrairport" class='fstdropdown-select'>
+                <select name = "arrairport" class='custom-select'>
                   {% for arrival_airport in arrival_airport %}
                   <option value="{{arrival_airport[0]}}" SELECTED>{{arrival_airport[0]}}</option>"
                   {% endfor %}
                 </select>
                 </label>
                 <label> Departure Airport:
-                <select name = "depairport" class='fstdropdown-select'>
+                <select name = "depairport" class='custom-select'>
                   {% for departure_airport in departure_airport %}
                   <option value="{{departure_airport[0]}}" SELECTED>{{departure_airport[0]}}</option>"
                   {% endfor %}
@@ -46,11 +49,14 @@
               {% if searchtype == 'flight_num_search' %}
                 <div>
                   <label>Flight Number:
-                    <input type="number" name="flight_num">
+                    <input type="number" name="flight_num" class="form-control">
                   </label>
                 </div>
               {% endif %}
-              Departure Date: <input type="datetime-local" name="depdate">
+              <label> Departure Date:
+              <input type="datetime-local" name="depdate" class="form-control">
+            </div>
+          </fieldset>
               <input type="submit" name="submit_button" value="Submit">
             </form>
           </body>
