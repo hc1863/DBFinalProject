@@ -11,6 +11,7 @@ from time import strftime
 import time
 from dateutil.relativedelta import *
 from flask_bootstrap import Bootstrap
+import hashlib
 
 #Initialize the app from Flask
 app = Flask(__name__)
@@ -177,7 +178,7 @@ def toggle():
 def loginAuth():
 	#grabs information from the forms
     email = request.form['email']
-    password = request.form['password']
+    password = hashlib.md5(request.form['password'].encode()).hexdigest()
     typeof = request.form['typeof']
     #cursor used to send queries
     cursor = conn.cursor()
@@ -207,7 +208,7 @@ def loginAuth():
 def asloginAuth():
 	#grabs information from the forms
     username = request.form['username']
-    password = request.form['password']
+    password = hashlib.md5(request.form['password'].encode()).hexdigest()
     #cursor used to send queries
     cursor = conn.cursor()
 	#executes query
@@ -234,7 +235,7 @@ def asloginAuth():
 def registerAuth():
 	#grabs information from the forms
     email = request.form['email']
-    password = request.form['password']
+    password = hashlib.md5(request.form['password'].encode()).hexdigest()
     name = request.form['name']
     pnum = request.form['phone_number']
     ppnum = request.form['passport_number']
@@ -279,7 +280,7 @@ def registerAuth():
 def baregisterAuth():
 	#grabs information from the forms
     email = request.form['email']
-    password = request.form['password']
+    password = hashlib.md5(request.form['password'].encode()).hexdigest()
     baid = request.form['booking_agent_id']
 
 #	if not len(password) >= 4:
@@ -312,7 +313,7 @@ def baregisterAuth():
 def asregisterAuth():
 	#grabs information from the forms
     username = request.form['username']
-    password = request.form['password']
+    password = hashlib.md5(request.form['password'].encode()).hexdigest()
     fname = request.form['first_name']
     lname = request.form['last_name']
     dob = request.form['date_of_birth']
