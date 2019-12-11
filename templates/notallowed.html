@@ -5,7 +5,11 @@
 
   You are not allowed on this page
   {% if session['typeof'] is defined %}
-  <a href="/home">Back to home</a>
+    {% if session['typeof'] == 'airline_staff' %}
+      <a href="/ashome">Back to home</a>
+    {% else %}
+      <a href="/home"> Back to home</a>
+    {% endif %}
   {% else %}
   <a href="/">Back to home</a>
   {% endif %}
