@@ -97,6 +97,7 @@ def test():
         data = cursor.fetchall()
         cursor.close()
         departure_airportdata = list(data)
+        error=None
         if request.method == "POST":
             arrairport = request.form.get("arrairport", None)
             depairport = request.form.get("depairport", None)
@@ -122,7 +123,7 @@ def test():
             else:
                 error = 'One or more fields have not been filled in!'
                 return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, error=error, searchtype = searchtype)
-        return render_template('testpage1.html', arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, searchtype=searchtype)
+        return render_template('testpage1.html', error=error, arrival_airport=arrival_airportdata, departure_airport=departure_airportdata, searchtype=searchtype)
     elif searchtype == 'flight_num_search':
         if request.method == "POST":
             flight_num = request.form.get("flight_num", None)
@@ -612,6 +613,7 @@ def purchaseticket():
 
     except KeyError:
         return render_template('notallowed.html')
+
     if session['typeof'] == 'customer':
         ticket_info = request.form.get("ticketpurchase", None)
         ticket_info = eval(ticket_info)
@@ -674,11 +676,16 @@ def purchaseticket():
 
         d = date.today()
         email = request.form.get("customer_email", None)
-        cursor = conn.cursor();
-        purchasesdatainsertquery = ("INSERT INTO purchases (ticket_id, customer_email, booking_agent_id, purchase_date) VALUES (\"{}\", \"{}\", \"{}\",\"{}\")")
-        cursor.execute(purchasesdatainsertquery.format(ticket_id, email,booking_agent_id,d))
-        conn.commit()
-        cursor.close()
+        try:
+            cursor = conn.cursor();
+            purchasesdatainsertquery = ("INSERT INTO purchases (ticket_id, customer_email, booking_agent_id, purchase_date) VALUES (\"{}\", \"{}\", \"{}\",\"{}\")")
+            cursor.execute(purchasesdatainsertquery.format(ticket_id, email,booking_agent_id,d))
+            conn.commit()
+            cursor.close()
+
+        except:
+            error = "Invalid email"
+            return redirect(url_for('test', error=error))
 
         ##Html information
         departure_aiport=ticket_info[2]
@@ -1142,7 +1149,7 @@ def testchart():
 @app.route('/viewcommission', methods=['GET', 'POST'])
 def viewcommission():
     try:
-        if session['typeof'] != "customer":
+        if session['typeof'] != "booking_agent":
 
             return render_template('notallowed.html')
 
