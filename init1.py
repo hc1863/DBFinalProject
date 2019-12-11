@@ -19,7 +19,7 @@ Bootstrap(app)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -385,6 +385,13 @@ def logout():
 
 @app.route('/viewflights')
 def viewflights():
+    try:
+        if session['typeof'] != "customer":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     cursor = conn.cursor()
     query = "SELECT DISTINCT flight_num FROM ticket NATURAL JOIN purchases WHERE customer_email = \"{}\""
     cursor.execute(query.format(session['email']))
@@ -407,7 +414,13 @@ def viewflights():
 
 @app.route('/baviewflights')
 def baviewflights():
+    try:
+        if session['typeof'] != "booking_agent":
 
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     cursor = conn.cursor()
     query = "SELECT booking_agent_id from booking_agent WHERE email = \"{}\""
     cursor.execute(query.format(session['email']))
@@ -438,7 +451,13 @@ def baviewflights():
 
 @app.route('/ASviewflights',methods=['GET', 'POST'])
 def ASviewflights():
+    try:
+        if session['typeof'] != "airline_staff":
 
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     cursor = conn.cursor()
     query = "SELECT airline_name from airline_staff WHERE username = \"{}\""
     cursor.execute(query.format(session['username']))
@@ -497,6 +516,13 @@ def ASviewflights():
 
 @app.route('/viewflightcustomerlist', methods=['GET', 'POST'])
 def viewflightcustomerlist():
+    try:
+        if session['typeof'] != "airline_staff":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     ticket_info = request.form.get("custlist", None)
     ticket_info = eval(ticket_info)
     flight_num = ticket_info[1]
@@ -521,7 +547,13 @@ def viewflightcustomerlist():
 
 @app.route('/AScreateflights',methods=['GET', 'POST'])
 def AScreateflights():
+    try:
+        if session['typeof'] != "airline_staff":
 
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     cursor = conn.cursor()
     query = "SELECT airline_name from airline_staff WHERE username = \"{}\""
     cursor.execute(query.format(session['username']))
@@ -573,6 +605,13 @@ def AScreateflights():
 
 @app.route('/purchaseticket', methods=['GET', 'POST'])
 def purchaseticket():
+    try:
+        if session['typeof'] != "customer" and session['typeof'] != 'booking_agent':
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     if session['typeof'] == 'customer':
         ticket_info = request.form.get("ticketpurchase", None)
         ticket_info = eval(ticket_info)
@@ -633,7 +672,7 @@ def purchaseticket():
         conn.commit()
         cursor.close()
 
-        d = datetime.today()
+        d = date.today()
         email = request.form.get("customer_email", None)
         cursor = conn.cursor();
         purchasesdatainsertquery = ("INSERT INTO purchases (ticket_id, customer_email, booking_agent_id, purchase_date) VALUES (\"{}\", \"{}\", \"{}\",\"{}\")")
@@ -652,6 +691,13 @@ def purchaseticket():
 
 @app.route('/ASchangestatus', methods=['GET', 'POST'])
 def changeflightstatus():
+    try:
+        if session['typeof'] != "airline_staff":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     if request.method == "POST":
         flight_num = request.form.get("flight_num", None)
         status = request.form.get("status", None)
@@ -665,6 +711,13 @@ def changeflightstatus():
 
 @app.route('/ASaddairplane', methods=['GET', 'POST'])
 def ASaddairplane():
+    try:
+        if session['typeof'] != "airline_staff":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     if request.method == "POST":
         airline_name = request.form.get("airline_name", None)
         airplane_id = request.form.get("airplane_id", None)
@@ -679,6 +732,13 @@ def ASaddairplane():
 
 @app.route('/ASaddairport', methods=['GET', 'POST'])
 def ASaddairport():
+    try:
+        if session['typeof'] != "airline_staff":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     if request.method == "POST":
         airport_name = request.form.get("airport_name", None)
         airport_city = request.form.get("airport_city", None)
@@ -692,7 +752,6 @@ def ASaddairport():
 
 @app.route('/ASviewagents')
 def ASviewagents():
-
     try:
         if session['typeof'] != "airline_staff":
 
@@ -700,13 +759,6 @@ def ASviewagents():
 
     except KeyError:
         return render_template('notallowed.html')
-
-    # cursor = conn.cursor()
-    # query = "SELECT booking_agent_id FROM booking_agent WHERE email=\"{}\""
-    # cursor.execute(query.format(session['email']))
-    # data = cursor.fetchall()
-    # cursor.close()
-    # baid = flatten(data)[0]
 
     oldmonth = date.today()+relativedelta(months=-1)
     oldyear = date.today()+relativedelta(years=-1)
@@ -791,6 +843,13 @@ def ASviewagents():
 
 @app.route('/ASfreqcustomer')
 def ASfreqcustomer():
+    try:
+        if session['typeof'] != "airline_staff":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     mydate = date.today()
     oldyear = date.today()+relativedelta(years=-1)
     cursor = conn.cursor()
@@ -807,6 +866,13 @@ def ASfreqcustomer():
 
 @app.route('/ASviewcustflightlist', methods=['GET', 'POST'])
 def ASviewcustflightlist():
+    try:
+        if session['typeof'] != "airline_staff":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     cust_info = request.form.get("custflightlist", None)
     cust_info = eval(cust_info)
     customer_email = cust_info[0]
@@ -834,6 +900,13 @@ def ASviewcustflightlist():
 
 @app.route('/trackmyspending')
 def trackmyspending():
+    try:
+        if session['typeof'] != "customer":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     d = date.today() - timedelta(days=365)
 
     cursor = conn.cursor()
@@ -864,6 +937,13 @@ def trackmyspending():
 
 @app.route('/testchart', methods=['GET', 'POST'])
 def testchart():
+    try:
+        if session['typeof'] != "customer":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     today = date.today()
     thismonth = int(strftime('%m')) - 1
     firstday = today.replace(day=1)
@@ -1073,7 +1153,13 @@ def testchart():
 
 @app.route('/viewcommission', methods=['GET', 'POST'])
 def viewcommission():
+    try:
+        if session['typeof'] != "customer":
 
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
 
     today = date.today()
     last30days = date.today() - datetime.timedelta(days=30)
