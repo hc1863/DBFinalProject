@@ -1153,7 +1153,7 @@ def testchart():
 @app.route('/viewcommission', methods=['GET', 'POST'])
 def viewcommission():
     try:
-        if session['typeof'] != "customer":
+        if session['typeof'] != "booking_agent":
 
             return render_template('notallowed.html')
 
