@@ -19,7 +19,7 @@ Bootstrap(app)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.3',
+conn = pymysql.connect(host='192.168.64.2',
                        user='root',
                        password='admin',
                        database='blog')
@@ -30,7 +30,7 @@ searchtype = 'Airport_search'
 #Define a route to hello function
 @app.route('/')
 def hello():
-	return render_template('index.html')
+	return redirect(url_for('test'))
 
 #Routing to retrieve dropdown options when searching for flight information
 @app.route('/getarrivalairport')
