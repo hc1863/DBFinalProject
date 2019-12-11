@@ -1,26 +1,22 @@
-<html>
-<head>
-</head>
-<body>
-<form action="/post" method="POST">
-	<h1>Welcome {{username}}</h1>
-</form>
+{% extends "layoutlegacy.html" %}
+{% block content %}
 
-<a href='/ASviewflights'>View Flights</a>
-<a href='/AScreateflights'>Create New Flights</a>
-<a href='/ASchangestatus'>Change Status of flights</a>
-<a href='/ASaddairplane'>Add Airplane</a>
-<a href='/ASaddairport'>Add Airport</a>
-<a href='/ASviewagents'>View Booking Agents</a>
-<a href='/ASfreqcustomer'>View Frequent Customers</a>
-<a href='/viewreports'>View Reports</a>
-<a href='/comparerev'>Comparison of Revenue Earned</a>
-<a href='/viewtopdestinations'>View Top Destinations</a>
+<div class="jumbotron">
+  <h1 class="display-3">Welcome {{username}}!</h1>
+  <p class="lead">Choose what you would like to do from the options below:</p>
+  <hr class="my-4">
+  <p class="lead">
+		<a class="btn btn-primary btn-lg" role="button" href='/ASviewflights' style='margin:5px;'>View Flights</a>
+		<a class="btn btn-primary btn-lg" role="button" href='/AScreateflights'>Create New Flights</a>
+		<a class="btn btn-primary btn-lg" role="button" href='/ASchangestatus'>Change Status of flights</a>
+		<a class="btn btn-primary btn-lg" role="button" href='/ASaddairplane'>Add Airplane</a>
+		<a class="btn btn-primary btn-lg" role="button" href='/ASaddairport'>Add Airport</a>
+		<a class="btn btn-primary btn-lg" role="button" href='/ASviewagents'>View Booking Agents</a>
+		<a class="btn btn-primary btn-lg" role="button" href='/ASfreqcustomer'>View Frequent Customers</a>
+		<a class="btn btn-primary btn-lg" role="button" href='/viewreports'>View Reports</a>
+		<a class="btn btn-primary btn-lg" role="button" href='/comparerev'>Comparison of Revenue Earned</a>
+		<a class="btn btn-primary btn-lg" role="button" href='/viewtopdestinations'>View Top Destinations</a>
+  </p>
+</div>
 
-
-<a href="/logout">Logout</a>
-
-</body>
-
-
-</html>
+{% endblock %}

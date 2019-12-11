@@ -1,36 +1,6 @@
-<html>
-  <head>
-    {% block head %}
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"> -->
-    <link rel="stylesheet" href="{{url_for('static', filename='fstdropdown.css')}}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    {% endblock %}
-  </head>
-  <body>
-    <div id="header">
-      {% block header %}
-      <p>
-          <strong>Navigation:</strong>
-          	{% if session['typeof'] is undefined %}
-          		<a href="/login">Login</a>
-          		<a href="/register">Register</a>
-          	{% endif %}
-
-          	{% if session['typeof'] is defined %}
-          		<a href="/logout">Logout</a>
-          		<a href="/remove_account">Remove Account</a>
-          		<br>
-
-          	{% endif %}
-        </p>
-        {% endblock %}
-    <div id = "content">{% block content %}{% endblock %}</div>
-
-    <div id="footer">
-      {% block footer %}
-      <p>Made by Hudson and Tony</p>
-      {% endblock %}
-  </body>
-</html>
+{% extends "bootstrap/base.html" %}
+{% block head %}{% endblock %}
+{% block styles %}{% endblock %}
+{% block header %}Test1{% endblock %}
+{% block content %}{% endblock %}
+1234

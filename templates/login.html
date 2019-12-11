@@ -1,22 +1,42 @@
-<html>
-<head>
-</head>
-<body>
+{% extends "layoutlegacy.html"%}
+{% block header %}{% endblock %}
+{% block content %}
+<div align="center">
+<div style="text-align:center; width:30% ;"class="jumbotron">
 <form action="/loginAuth" method="POST">
-	<input type="email" name = "email" placeholder="email" required/></br>
-	<input type="password" name = "password" placeholder="password" required/></br>
-	<input type="radio" name = "typeof" value = "customer" checked>Customer<br>
-	<input type="radio" name = "typeof" value = "booking_agent">Booking Agent<br>
-	<input type="submit" value = Login />
+	<fieldset>
+		<div class="form-group">
+      <label for="exampleInputEmail1" style="float:left;">Email address</label>
+      <input type="email" name = "email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
+		<div class="form-group">
+			<label for="exampleInputPassword1" style="float:left;">Password</label>
+			<input type="password" name = "password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+		</div>
+
+	<fieldset>
+		<div class="form-group">
+	    <div class="custom-control custom-radio">
+	      <input type="radio" id="customRadio1" name="typeof" value="customer" class="custom-control-input" checked="">
+	      <label class="custom-control-label" for="customRadio1">Customer</label>
+	    </div>
+	    <div class="custom-control custom-radio">
+	      <input type="radio" id="customRadio2" name="typeof" value="booking_agent" class="custom-control-input">
+	      <label class="custom-control-label" for="customRadio2">Booking Agent</label>
+	    </div>
+		</div>
+	</fieldset>
+		<button type="submit" class="btn btn-primary">Login</button>
+	</fieldset>
 	{% if error %}
 		<p class="error"><strong>Error:</strong> {{error}}</p>
 	{% endif %}
 </form>
-
 <a href="/">Go back</a>
 <a href="/aslogin">Airline Staff Login</a>
+</div>
+</div>
 
-</body>
-
-
-</html>
+{% endblock %}
+{% block footer %}{% endblock %}

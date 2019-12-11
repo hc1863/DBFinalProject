@@ -15,7 +15,7 @@ import hashlib
 
 #Initialize the app from Flask
 app = Flask(__name__)
-Bootstrap(app)
+bootstrap = Bootstrap(app)
 #testchange 1
 
 #Configure MySQL
@@ -940,21 +940,21 @@ def testchart():
     data = cursor.fetchall()
     cursor.close()
 
-    temp1 = flatten(data)
+    t1 = flatten(data)
 
-    templist = []
-    for i in temp1:
+    tl = []
+    for i in t1:
         cursor = conn.cursor()
         query = "SELECT price FROM flight WHERE flight_num = \"{}\""
         cursor.execute(query.format(i))
         d = cursor.fetchall()
         cursor.close()
         for j in d:
-            templist.append(j[0])
+            tl.append(j[0])
 
-    spending = 0
-    for i in templist:
-        spending += i
+    s = 0
+    for i in tl:
+        s += i
 
     today = date.today()
     thismonth = int(strftime('%m')) - 1
@@ -1008,18 +1008,18 @@ def testchart():
                     templist1.append(j[0])
             valuelist.append(sum(templist1))
 
-        return render_template('testchart.html', labels = monthlist, values = valuelist, spending=spending)
+        return render_template('testchart.html', labels = monthlist, values = valuelist, spending=s)
 
-    lastm1 = get_lastday(today)
-    lastm2 = get_lastday(lastm1)
-    lastm3 = get_lastday(lastm2)
-    lastm4 = get_lastday(lastm3)
-    lastm5 = get_lastday(lastm4)
+    lastm1 = firstday+relativedelta(months=-1)
+    lastm2 = lastm1+relativedelta(months=-1)
+    lastm3 = lastm2+relativedelta(months=-1)
+    lastm4 = lastm3+relativedelta(months=-1)
+    lastm5 = lastm4+relativedelta(months=-1)
 
 #Last month purchases
     cursor = conn.cursor()
     query = "SELECT flight_num FROM ticket NATURAL JOIN purchases WHERE purchase_date<\"{}\" AND purchase_date>=\"{}\""
-    cursor.execute(query.format(today, lastm1))
+    cursor.execute(query.format(firstday, lastm1))
     data = cursor.fetchall()
     cursor.close()
     testvar = flatten(data)
@@ -1161,7 +1161,7 @@ def testchart():
     testvar2 = session['email']
 
     values = [spending4, spending3, spending2, spending1, spending, lastspending]
-    return render_template('testchart.html', labels = testlist, values = values, thismonth = testvar, spending=spending)
+    return render_template('testchart.html', labels = testlist, values = values, thismonth = firstday, spending=s)
 
 @app.route('/viewcommission', methods=['GET', 'POST'])
 def viewcommission():

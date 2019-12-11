@@ -1,135 +1,140 @@
-{% extends "layout.html" %}
-{% block head %}
-{{super()}}
-{% endblock %}
-
+{% extends "layoutlegacy.html" %}
 {% block content %}
-<div class="container">
-  <h2>Search for Upcoming Flights
-    {% if session['logged_in'] == True %}
-      <!-- <a href="/" style="float: right; font-size:13px">Logout</a> -->
-      <a href="/home" style="float: right; font-size:13px; padding-right: 10px">Go back to homepage</a>
-    {% endif %}
-  </h2>
-  <p>Upcoming flight info </p>
-  <p> Search by flight number and depature date OR BY arrival and departure airport and departure date </p>
-  <div class="dropdown">
-    <html>
-    <form action="/changesearch" method="POST">
-        <body>
-          {% if searchtype == 'Airport_search' %}
-            <button type="submit" name = "changesearch" value = "changesearch">Search by Flight Number!</button>
-          {% endif %}
-          {% if searchtype == 'flight_num_search' %}
-            <button type="submit" name = "changesearch" value = "changesearch">Search by Arrival and Departure Airport!</button>
-          {% endif %}
-        </body>
-    </form>
-      <body>
-        {% if error %}
-          <p class="error"><strong>Error:</strong> {{error}}</p>
-        {% endif %}
-        <form action="/testpage1" method="POST">
-          {% if searchtype == 'Airport_search' %}
-            <label> Arrival Airport:
-            <select name = "arrairport" class='fstdropdown-select'>
-              {% for arrival_airport in arrival_airport %}
-              <option value="{{arrival_airport[0]}}" SELECTED>{{arrival_airport[0]}}</option>"
-              {% endfor %}
-            </select>
-            </label>
-            <label> Departure Airport:
-            <select name = "depairport">
-              {% for departure_airport in departure_airport %}
-              <option value="{{departure_airport[0]}}" SELECTED>{{departure_airport[0]}}</option>"
-              {% endfor %}
-            </select>
-            </label>
-          {% endif %}
-          {% if searchtype == 'flight_num_search' %}
-            <div>
-              <label>Flight Number:
-                <input type="number" name="flight_num">
-              </label>
-            </div>
-          {% endif %}
-          Departure Date: <input type="datetime-local" name="depdate">
-          <input type="submit" name="submit_button" value="Submit">
-        </form>
-      </body>
-    </html>
-  </div>
-  <div id="result">
-    <div>
-    {% if arrairport is defined %}
-        Arrival Airport selected: {{ arrairport }}
-    {% endif %}
-    </div>
-    <div>
-    {% if depairport is defined %}
-        Departure selected: {{ depairport }}
-    {% endif %}
-    </div>
-    <div>
-    {% if flight_num is defined %}
-        Flight Number selected: {{ flight_num }}
-    {% endif %}
-    </div>
-    <div>
-    {% if depdate is defined %}
-        Date selected: {{ depdate }}
-    {% endif %}
-    </div>
-    {% if finalflightdata is defined %}
-    <style>
-      table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-      }
-      th, td {
-        padding: 10px;
-      }
-      </style>
-    <table border="1" id = "flight_info" >
-      <tr>
-        <th>Airline Name</th>
-        <th>Flight Number</th>
-        <th>Departure Aiport</th>
-        <th>Arrival Aiport</th>
-        <th>Departure Time</th>
-        <th>Arrival Time</th>
-        <th>Flight Status</th>
+
+    <div class="jumbotron">
+      <h2>Search for Upcoming Flights
         {% if session['logged_in'] == True %}
-        <th> Purchase Ticket </th>
+          <!-- <a href="/" style="float: right; font-size:13px">Logout</a> -->
+          <a href="/home" style="float: right; font-size:13px; padding-right: 10px">Go back to homepage</a>
         {% endif %}
-      </tr>
-      {% for row in finalflightdata %}
-      <tr>
-        {% for x in row %}
-           <td>{{x}}</td>
-        {% endfor %}
-        {% if session['logged_in'] == True %}
-        <td>
-          {% if session['typeof'] == 'booking_agent' %}
-            <form action="/purchaseticket" method="POST">
-              Customer Email: <input type="email" name="customer_email">
-            <button type="/submit" name = "ticketpurchase" value = "{{row}}" style="margin-top: 12px">Purchase a Ticket for this flight</button>
-          </form>
-          {% else %}
-          <form action="/purchaseticket" method="POST">
-          <button type="/submit" name = "ticketpurchase" value = "{{row}}" style="margin-top: 12px">Purchase a Ticket for this flight</button>
+      </h2>
+      <p>Upcoming flight info </p>
+      <p> Search by flight number and depature date OR BY arrival and departure airport and departure date </p>
+      <div class="dropdown">
+        <html>
+        <form action="/changesearch" method="POST">
+            <body>
+              {% if searchtype == 'Airport_search' %}
+                <button type="submit" name = "changesearch" value = "changesearch">Search by Flight Number!</button>
+              {% endif %}
+              {% if searchtype == 'flight_num_search' %}
+                <button type="submit" name = "changesearch" value = "changesearch">Search by Arrival and Departure Airport!</button>
+              {% endif %}
+            </body>
         </form>
-          {% endif %}
+          <body>
+            {% if error %}
+              <p class="error"><strong>Error:</strong> {{error}}</p>
+            {% endif %}
+            <form action="/testpage1" method="POST">
+              {% if searchtype == 'Airport_search' %}
+                <label> Arrival Airport:
+                <select name = "arrairport" class='fstdropdown-select'>
+                  {% for arrival_airport in arrival_airport %}
+                  <option value="{{arrival_airport[0]}}" SELECTED>{{arrival_airport[0]}}</option>"
+                  {% endfor %}
+                </select>
+                </label>
+                <label> Departure Airport:
+                <select name = "depairport" class='fstdropdown-select'>
+                  {% for departure_airport in departure_airport %}
+                  <option value="{{departure_airport[0]}}" SELECTED>{{departure_airport[0]}}</option>"
+                  {% endfor %}
+                </select>
+                </label>
+              {% endif %}
+              {% if searchtype == 'flight_num_search' %}
+                <div>
+                  <label>Flight Number:
+                    <input type="number" name="flight_num">
+                  </label>
+                </div>
+              {% endif %}
+              Departure Date: <input type="datetime-local" name="depdate">
+              <input type="submit" name="submit_button" value="Submit">
+            </form>
+          </body>
+        </html>
+      </div>
+      <div id="result">
+        <div>
+        {% if arrairport is defined %}
+            Arrival Airport selected: {{ arrairport }}
         {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-      </table>
-    {% endif %}
+        </div>
+        <div>
+        {% if depairport is defined %}
+            Departure selected: {{ depairport }}
+        {% endif %}
+        </div>
+        <div>
+        {% if flight_num is defined %}
+            Flight Number selected: {{ flight_num }}
+        {% endif %}
+        </div>
+        <div>
+        {% if depdate is defined %}
+            Date selected: {{ depdate }}
+        {% endif %}
+        </div>
+        {% if finalflightdata is defined %}
+        <style>
+          table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+          }
+          th, td {
+            padding: 10px;
+          }
+          </style>
+        <table id = "flight_info" class="table table-hover" >
+          <thead>
+            <tr class="table-primary">
+              <th>Airline Name</th>
+              <th>Flight Number</th>
+              <th>Departure Aiport</th>
+              <th>Arrival Aiport</th>
+              <th>Departure Time</th>
+              <th>Arrival Time</th>
+              <th>Flight Status</th>
+              {% if session['logged_in'] == True %}
+              <th> Purchase Ticket </th>
+              {% endif %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in finalflightdata %}
+            <tr class="table-light">
+              {% for x in row %}
+                 <td>{{x}}</td>
+              {% endfor %}
+              {% if session['logged_in'] == True %}
+              <td>
+                {% if session['typeof'] == 'booking_agent' %}
+                  <form action="/purchaseticket" method="POST">
+                    Customer Email: <input type="email" name="customer_email">
+                  <button type="/submit" name = "ticketpurchase" value = "{{row}}" style="margin-top: 12px">Purchase a Ticket for this flight</button>
+                </form>
+                {% else %}
+                <form action="/purchaseticket" method="POST">
+                <button type="/submit" name = "ticketpurchase" value = "{{row}}" style="margin-top: 12px">Purchase a Ticket for this flight</button>
+              </form>
+                {% endif %}
+              {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
 
 
-  </div>
-</div>
+      </div>
+    </div>
 
 {% endblock %}
+{% block script %}
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js'></script>
 <script src="{{url_for('.static', filename='fstdropdown.js')}}"></script>
+{% endblock %}

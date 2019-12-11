@@ -2,7 +2,7 @@
   <meta charset="utf-8" />
   <title>Tickets Sold</title>
   <!-- import plugin script -->
-  <script src='static/Chart.min.js'></script>
+  <script src='static/js/Chart.min.js'></script>
 </head>
 
 <h1>Tickets Sold</h1>
@@ -27,7 +27,7 @@ var chartData = {
              "{{item}}",
             {% endfor %}],
   datasets : [{
-      label: 'Dollar Amount',
+      label: 'Number of Tickets Sold',
       fill: true,
       lineTension: 0.1,
       backgroundColor: "rgba(75,192,192,0.4)",
