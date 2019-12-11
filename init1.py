@@ -19,7 +19,7 @@ Bootstrap(app)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.3',
+conn = pymysql.connect(host='192.168.64.2',
                        user='root',
                        password='admin',
                        database='blog')
@@ -897,9 +897,9 @@ def ASviewcustflightlist():
 
 
 
-
-@app.route('/trackmyspending')
-def trackmyspending():
+#Track my spending
+@app.route('/testchart', methods=['GET', 'POST'])
+def testchart():
     try:
         if session['typeof'] != "customer":
 
@@ -907,6 +907,7 @@ def trackmyspending():
 
     except KeyError:
         return render_template('notallowed.html')
+
     d = date.today() - timedelta(days=365)
 
     cursor = conn.cursor()
@@ -931,19 +932,6 @@ def trackmyspending():
     for i in templist:
         spending += i
 
-
-
-    return render_template('trackmyspending.html', spending=spending, d=d)
-
-@app.route('/testchart', methods=['GET', 'POST'])
-def testchart():
-    try:
-        if session['typeof'] != "customer":
-
-            return render_template('notallowed.html')
-
-    except KeyError:
-        return render_template('notallowed.html')
     today = date.today()
     thismonth = int(strftime('%m')) - 1
     firstday = today.replace(day=1)
@@ -996,7 +984,7 @@ def testchart():
                     templist1.append(j[0])
             valuelist.append(sum(templist1))
 
-        return render_template('testchart.html', labels = monthlist, values = valuelist)
+        return render_template('testchart.html', labels = monthlist, values = valuelist, spending=spending)
 
     lastm1 = get_lastday(today)
     lastm2 = get_lastday(lastm1)
@@ -1149,12 +1137,12 @@ def testchart():
     testvar2 = session['email']
 
     values = [spending4, spending3, spending2, spending1, spending, lastspending]
-    return render_template('testchart.html', labels = testlist, values = values, thismonth = testvar)
+    return render_template('testchart.html', labels = testlist, values = values, thismonth = testvar, spending=spending)
 
 @app.route('/viewcommission', methods=['GET', 'POST'])
 def viewcommission():
     try:
-        if session['typeof'] != "booking_agent":
+        if session['typeof'] != "customer":
 
             return render_template('notallowed.html')
 
