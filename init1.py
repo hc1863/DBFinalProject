@@ -1238,6 +1238,13 @@ def viewcommission():
 
 @app.route('/viewtopcustomers')
 def viewtopcustomers():
+    try:
+        if session['typeof'] != "booking_agent":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
 
     cursor = conn.cursor()
     query = "SELECT booking_agent_id FROM booking_agent WHERE email=\"{}\""
@@ -1292,6 +1299,13 @@ def viewtopcustomers():
 
 @app.route('/viewtopdestinations')
 def viewtopdestinations():
+    try:
+        if session['typeof'] != "airline_staff":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
 
     today = date.today()
     last3months = today+relativedelta(months=-3)
@@ -1325,6 +1339,13 @@ def viewtopdestinations():
 
 @app.route('/comparerev')
 def comparerev():
+    try:
+        if session['typeof'] != "airline_staff":
+
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')
     today = date.today()
     lastmonth = today+relativedelta(months=-1)
     lastyear = today+relativedelta(years=-1)
@@ -1391,7 +1412,13 @@ def comparerev():
 
 @app.route('/viewreports', methods=['GET', 'POST'])
 def viewreports():
+    try:
+        if session['typeof'] != "airline_staff":
 
+            return render_template('notallowed.html')
+
+    except KeyError:
+        return render_template('notallowed.html')   
     months = ["January","February","March","April","May","June","July","August", "September", "October", "November", "December"]
 
     cursor = conn.cursor()
