@@ -25,14 +25,8 @@
 			<label for="dob" style="float:left;">Date of Birth</label>
 			<input required type="date" name = "date_of_birth" class="form-control" id="dob" placeholder="Date of Birth">
 		</div>
-	<div class="form-group">
-		<label for="exampleSelect2">Airline</label>
-			<select name="airline_name" class="form-control" id="exampleSelect2">
-				{% for aname in airlinenames %}
-		    <option value={{aname[0]}} SELECTED>{{aname[0]}}</option>
-		    {% endfor %}
-			</select>
-	</div>
+		<input required type="text" name = "airline_name" class="form-control" id="arn" placeholder="Airline name">
+	
 
 	<button type="submit" class="btn btn-primary" style="margin:10px;">Register</button>
 	<button type="reset" class="btn btn-primary">Reset</button>
