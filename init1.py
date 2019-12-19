@@ -19,7 +19,7 @@ bootstrap = Bootstrap(app)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.2',
+conn = pymysql.connect(host='192.168.64.3',
                        user='root',
                        password='admin',
                        database='blog')
@@ -339,7 +339,7 @@ def asregisterAuth():
         error = "This user already exists"
         return render_template('asregister.html', error = error)
     else:
-        ins = "INSERT INTO customer VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
+        ins = "INSERT INTO airline_staff VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
         cursor.execute(ins.format(username, password, fname, lname, dob, aname))
         conn.commit()
         cursor.close()
