@@ -1,39 +1,69 @@
-<h2> Your Flight Info
-<a href="/ashome" style="float: right; font-size:13px; padding-right: 10px">Go back to homepage</a>
-</h2>
-<p> Your Upcoming Flights (Next 30 Days)
+{% extends "layoutlegacy.html" %}
+{% block header %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <a class="navbar-brand" href="#">Database Final Project</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarColor01">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#"> <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#"></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#"></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#"></a>
+      </li>
+    </ul>
+    <button type="button" onclick="location.href='/ashome'" class="btn btn-secondary">Back to Home</button>
+  </div>
+</nav>
+
+{% endblock %}
+{% block content %}
+<div class="jumbotron">
+<h1> Your Upcoming Flights (Next 30 Days) </h1>
 <p> Todays Date: {{date}}
 
-<body>
   <form action="/ASviewflights" method="POST">
+    <fieldset>
       {% if error %}
         <p class="error"><strong>Error:</strong> {{error}}</p>
       {% endif %}
       <label> Arrival Airport:
-      <select name = "arrairport">
+      <select name = "arrairport" class="custom-select">
         {% for arrival_airport in arrival_airport %}
         <option value="{{arrival_airport[0]}}" SELECTED>{{arrival_airport[0]}}</option>"
         {% endfor %}
       </select>
       </label>
       <label> Departure Airport:
-      <select name = "depairport">
+      <select name = "depairport" class="custom-select">
         {% for departure_airport in departure_airport %}
         <option value="{{departure_airport[0]}}" SELECTED>{{departure_airport[0]}}</option>"
         {% endfor %}
       </select>
       </label>
-      <div>
-    FROM: <input type="datetime-local" name="fromdate" style="margin-top: 7px">
+      <div class="form-row">
+        <div class="col">
+    <label> FROM: </label> <input type="datetime-local" name="fromdate" style="margin-top: 7px" class="form-control">
     </div>
-    <div>
-      TO: <input type="datetime-local" name="todate" style="margin-top: 7px">
-      <input type="submit" name="submit_button" value="Submit">
+    <div class="col">
+      <label>TO: </label><input type="datetime-local" name="todate" style="margin-top: 7px" class="form-control">
       </div>
+      <button type="submit" class="btn btn-primary" style="margin:10px;">Submit</button>
+      </div>
+      </fieldset>
   </form>
-</body>
-<table border="1" id = "flight_info" >
-  <tr>
+<table class="table table-hover" id = "flight_info" >
+  <thead>
+  <tr class="table-primary">
     <th>Airline Name</th>
     <th>Flight Number</th>
     <th>Departure Aiport</th>
@@ -43,8 +73,10 @@
     <th>Flight Status</th>
     <th> Passenger/Customer List </th>
   </tr>
+  </thead>
   {% for row in flightlist %}
-  <tr>
+  <tbody>
+  <tr class="table-secondary">
     {% for x in row %}
        <td>{{x}}</td>
     {% endfor %}
@@ -52,5 +84,8 @@
     <td><button type="/submit" name = "custlist" value = "{{row}}" >View Customer List</button></td>
   </form>
   </tr>
+  </tbody>
   {% endfor %}
   </table>
+  </div>
+{% endblock %}

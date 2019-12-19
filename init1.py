@@ -339,7 +339,7 @@ def asregisterAuth():
         error = "This user already exists"
         return render_template('asregister.html', error = error)
     else:
-        ins = "INSERT INTO customer VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
+        ins = "INSERT INTO airline_staff VALUES(\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\')"
         cursor.execute(ins.format(username, password, fname, lname, dob, aname))
         conn.commit()
         cursor.close()
@@ -1419,7 +1419,7 @@ def comparerev():
     values1 = [set3, set4]
 
 
-    return render_template('comparerev.html', tvar=set1, labels=labels, values=values, values1=values1)
+    return render_template('comparerev.html', tvar=list1, labels=labels, values=values, values1=values1)
 
 @app.route('/viewreports', methods=['GET', 'POST'])
 def viewreports():
