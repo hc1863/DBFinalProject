@@ -19,7 +19,7 @@ bootstrap = Bootstrap(app)
 #testchange 1
 
 #Configure MySQL
-conn = pymysql.connect(host='192.168.64.3',
+conn = pymysql.connect(host='192.168.64.2',
                        user='root',
                        password='admin',
                        database='blog')
@@ -1323,30 +1323,35 @@ def viewtopdestinations():
     lastyear = today+relativedelta(years=-1)
 
     cursor = conn.cursor()
-    query = "SELECT arrival_airport, count(arrival_airport) FROM flight WHERE departure_time = \"{}\" GROUP BY arrival_airport"
+    query = "SELECT arrival_airport, count(arrival_airport) FROM flight WHERE departure_time > \"{}\" GROUP BY arrival_airport"
     cursor.execute(query.format(last3months))
     data = cursor.fetchall()
     cursor.close()
 
     cursor = conn.cursor()
-    query = "SELECT arrival_airport, count(arrival_airport) FROM flight WHERE departure_time = \"{}\" GROUP BY arrival_airport"
+    query = "SELECT arrival_airport, count(arrival_airport) FROM flight WHERE departure_time > \"{}\" GROUP BY arrival_airport"
     cursor.execute(query.format(lastyear))
     data1 = cursor.fetchall()
     cursor.close()
 
 
-    newdict = {"No Destination Entered 3":.1, "No Destination Entered 2":.2, "No Destination Entered 1":.3}
+    newdict = {}
     for i in data:
         newdict[i[0]] = i[1]
     list = [(k, v) for k, v in sorted(newdict.items(), key=lambda item: item[1], reverse=True)]
 
-    newdict1 = {"No Destination Entered 3":.1, "No Destination Entered 2":.2, "No Destination Entered 1":.3}
+    while len(list) < 3:
+        list.append(("No Value", 0))
+
+    newdict1 = {}
     for i in data1:
         newdict1[i[0]] = i[1]
     list1 = [(k, v) for k, v in sorted(newdict1.items(), key=lambda item: item[1], reverse=True)]
 
+    while len(list1) < 3:
+        list1.append(("No Value", 0))
 
-    return render_template('viewtopdestinations.html', newdict=list, newdict1=list1)
+    return render_template('viewtopdestinations.html', list=list, list1=list1, test=data)
 
 @app.route('/comparerev')
 def comparerev():
